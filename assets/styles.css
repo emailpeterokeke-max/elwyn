@@ -1,0 +1,38 @@
+:root{
+--bg:#0b1220; --card:#121a2b; --muted:#94a3b8; --text:#d6e3ff; --border:#22304a;
+--primary:#5aa2ff; --primary-2:#2e7cff; --chip:#1a2540;
+}
+*{box-sizing:border-box} html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
+.container{max-width:1200px;margin:0 auto;padding:0 16px}
+.site-header{border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);backdrop-filter:saturate(120%) blur(6px);position:sticky;top:0;z-index:10}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+.brand .logo{font-weight:800;letter-spacing:.8px}
+.brand .ai{color:var(--primary)}
+.badge{background:var(--chip);border:1px solid var(--border);padding:4px 8px;border-radius:999px;font-size:12px}
+.divider{display:inline-block;width:8px}
+.status{margin-left:8px;color:var(--muted)}
+.app{display:grid;grid-template-columns:240px 1fr;gap:16px;max-width:1300px;margin:18px auto;padding:0 16px}
+.sidebar{position:sticky;top:64px;align-self:start}
+.section{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;padding:10px}
+.section.small select{width:100%;margin-top:6px}
+.title{font-weight:700;margin-bottom:8px}
+.side-link{display:block;width:100%;text-align:left;border:1px solid var(--border);background:transparent;color:var(--text);padding:8px 10px;border-radius:8px;margin:6px 0;cursor:pointer}
+.side-link.is-active, .side-link:hover{border-color:var(--primary)}
+.content .panel{display:none}
+.content .panel.is-visible{display:block}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:16px}
+.hstack{display:flex;gap:8px}
+.btn{border:1px solid var(--border);background:#152137;color:var(--text);border-radius:8px;padding:8px 12px;cursor:pointer}
+.btn-primary{background:linear-gradient(180deg,#2e7cff,#5aa2ff);border:0;color:#fff}
+.chat{display:flex;flex-direction:column;gap:10px}
+.chat-messages{height:420px;overflow:auto;border:1px solid var(--border);border-radius:10px;padding:10px;background:#0e1729}
+.chat-input{display:flex;gap:8px}
+.chat-input input{flex:1;border:1px solid var(--border);border-radius:10px;background:#0e1729;color:var(--text);padding:10px}
+.bubble{max-width:92%;padding:10px;border-radius:10px;margin:6px 0;white-space:pre-wrap}
+.bubble.user{background:#142139;border:1px solid var(--border)}
+.bubble.assistant{background:#101a31;border:1px solid var(--border)}
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:10px}
+.note{color:var(--muted)}
+.hide{display:none}
+.site-footer{border-top:1px solid var(--border);padding:20px 0;color:var(--muted);margin-top:20px}
