@@ -2,7 +2,7 @@
 (async () => {
 const st = document.getElementById("apiStatus");
 try {
-const r = await fetch(`${WORKER_URL}/v1/health`, { cache:"no-store" });
+const r = await fetch(`${https://elwyn.<your-handle>.workers.dev}/v1/health`, { cache:"no-store" });
 const j = await r.json().catch(()=>null);
 st.textContent = (j && j.ok) ? `online (${j.latest||"latest"})` : "error";
 } catch { st.textContent = "offline"; }
@@ -33,7 +33,7 @@ addBubble("assistant","…thinking…");
 
 
 try{
-const r = await fetch(`${WORKER_URL}/v1/chat`, {
+const r = await fetch(`${https://elwyn.<your-handle>.workers.dev}/v1/chat`, {
 method:"POST",
 headers:{ "content-type": "application/json" },
 body: JSON.stringify({ model: currentModel(), messages: hist })
