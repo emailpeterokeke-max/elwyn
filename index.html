@@ -1,294 +1,89 @@
-# Elwyn AI — Step 1 (GitHub + Vercel) Starter Files
-
-> Greenfield Elwyn build. No EraWorld assets, code, or copy.
-
-## File tree
-
-```
-/ (repo root)
-├─ index.html
-└─ assets/
-   ├─ styles.css
-   └─ app.js
-```
-
----
-
-## `index.html`
-
-```html
 <!doctype html>
-<html lang="en" data-app="elwyn">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Elwyn AI</title>
-  <meta name="theme-color" content="#0b1220" />
-  <meta name="description" content="Elwyn AI — one-page interface for text, image, video, and sound intelligence." />
-  <link rel="stylesheet" href="/assets/styles.css" />
-</head>
-<body class="theme-dark">
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="/">
-        <span class="logo">ELWYN<span class="ai">AI</span></span>
-      </a>
-      <div class="right">
-        <span id="engineBadge" class="badge">engine: latest</span>
-        <span class="divider"></span>
-        <span class="muted">API:</span> <code id="apiBase">—</code>
-        <span class="status" id="apiStatus">checking…</span>
-      </div>
-    </div>
-  </header>
+<option value="gpt-4o-mini">gpt-4o-mini</option>
+</select>
+</div>
+</aside>
 
-  <main class="app">
-    <aside class="sidebar">
-      <div class="section">
-        <div class="title">Tools</div>
-        <button class="side-link is-active" data-view="chat">Chat</button>
-        <button class="side-link" data-view="t2i">Text → Image</button>
-        <button class="side-link" data-view="t2v">Text → Video</button>
-        <button class="side-link" data-view="t2s">Text → Sound</button>
-        <button class="side-link" data-view="features">Feature Options</button>
-      </div>
-      <div class="section small">
-        <div class="title">Engine</div>
-        <select id="engineSelect">
-          <option value="latest" selected>Latest (auto)</option>
-          <option value="gpt-5-thinking">gpt-5-thinking</option>
-          <option value="gpt-5">gpt-5</option>
-          <option value="gpt-4o">gpt-4o</option>
-          <option value="gpt-4o-mini">gpt-4o-mini</option>
-        </select>
-      </div>
-    </aside>
 
-    <section class="content" id="view">
-      <!-- Chat -->
-      <section class="panel is-visible" data-panel="chat">
-        <div class="card">
-          <h2>Chat</h2>
-          <div class="chat">
-            <div id="chatLog" class="chat-messages"></div>
-            <form id="chatForm" class="chat-input" autocomplete="off">
-              <input id="chatBox" type="text" placeholder="Ask anything…" />
-              <button class="btn btn-primary" type="submit">Send</button>
-            </form>
-          </div>
-        </div>
-      </section>
+<section class="content" id="view">
+<!-- Chat -->
+<section class="panel is-visible" data-panel="chat">
+<div class="card">
+<h2>Chat</h2>
+<div class="chat">
+<div id="chatLog" class="chat-messages"></div>
+<form id="chatForm" class="chat-input" autocomplete="off">
+<input id="chatBox" type="text" placeholder="Ask anything…" />
+<button class="btn btn-primary" type="submit">Send</button>
+</form>
+</div>
+</div>
+</section>
 
-      <!-- Text → Image -->
-      <section class="panel" data-panel="t2i">
-        <div class="card">
-          <h2>Text → Image</h2>
-          <form id="imgForm" class="hstack" autocomplete="off">
-            <input id="imgPrompt" type="text" placeholder="Describe the image…" />
-            <button class="btn" type="submit">Generate</button>
-          </form>
-          <div id="imgOut" class="img-grid"></div>
-        </div>
-      </section>
 
-      <!-- Text → Video (API in Step 2/3) -->
-      <section class="panel" data-panel="t2v">
-        <div class="card">
-          <h2>Text → Video</h2>
-          <form id="vidForm" class="hstack" autocomplete="off">
-            <input id="vidPrompt" type="text" placeholder="Describe the video…" />
-            <button class="btn" type="submit">Render</button>
-          </form>
-          <div id="vidOut" class="note">Rendering pipeline connects in API step.</div>
-        </div>
-      </section>
+<!-- Text → Image -->
+<section class="panel" data-panel="t2i">
+<div class="card">
+<h2>Text → Image</h2>
+<form id="imgForm" class="hstack" autocomplete="off">
+<input id="imgPrompt" type="text" placeholder="Describe the image…" />
+<button class="btn" type="submit">Generate</button>
+</form>
+<div id="imgOut" class="img-grid"></div>
+</div>
+</section>
 
-      <!-- Text → Sound (API in Step 2/3) -->
-      <section class="panel" data-panel="t2s">
-        <div class="card">
-          <h2>Text → Sound</h2>
-          <form id="audForm" class="hstack" autocomplete="off">
-            <input id="audPrompt" type="text" placeholder="Describe the sound/music…" />
-            <button class="btn" type="submit">Synthesize</button>
-          </form>
-          <audio id="audPlayer" controls class="hide"></audio>
-          <div id="audOut" class="note">Synthesis connects in API step.</div>
-        </div>
-      </section>
 
-      <!-- Feature Options -->
-      <section class="panel" data-panel="features">
-        <div class="card">
-          <h2>Feature Options</h2>
-          <div class="grid two">
-            <label>Temperature
-              <input id="optTemp" type="range" min="0" max="1" step="0.1" value="0.3" />
-            </label>
-            <label>Max tokens
-              <input id="optMaxTok" type="number" min="64" max="4096" value="1024" />
-            </label>
-          </div>
-        </div>
-      </section>
-    </section>
-  </main>
+<!-- Text → Video (API in Step 2/3) -->
+<section class="panel" data-panel="t2v">
+<div class="card">
+<h2>Text → Video</h2>
+<form id="vidForm" class="hstack" autocomplete="off">
+<input id="vidPrompt" type="text" placeholder="Describe the video…" />
+<button class="btn" type="submit">Render</button>
+</form>
+<div id="vidOut" class="note">Rendering pipeline connects in API step.</div>
+</div>
+</section>
 
-  <footer class="site-footer">
-    <div class="container">© 2025 Elwyn AI — One-page interface (Mission 1)</div>
-  </footer>
 
-  <script src="/assets/app.js" defer></script>
+<!-- Text → Sound (API in Step 2/3) -->
+<section class="panel" data-panel="t2s">
+<div class="card">
+<h2>Text → Sound</h2>
+<form id="audForm" class="hstack" autocomplete="off">
+<input id="audPrompt" type="text" placeholder="Describe the sound/music…" />
+<button class="btn" type="submit">Synthesize</button>
+</form>
+<audio id="audPlayer" controls class="hide"></audio>
+<div id="audOut" class="note">Synthesis connects in API step.</div>
+</div>
+</section>
+
+
+<!-- Feature Options -->
+<section class="panel" data-panel="features">
+<div class="card">
+<h2>Feature Options</h2>
+<div class="grid two">
+<label>Temperature
+<input id="optTemp" type="range" min="0" max="1" step="0.1" value="0.3" />
+</label>
+<label>Max tokens
+<input id="optMaxTok" type="number" min="64" max="4096" value="1024" />
+</label>
+</div>
+</div>
+</section>
+</section>
+</main>
+
+
+<footer class="site-footer">
+<div class="container">© 2025 Elwyn AI — One-page interface (Mission 1)</div>
+</footer>
+
+
+<script src="/assets/app.js" defer></script>
 </body>
 </html>
-```
-
----
-
-## `assets/styles.css`
-
-```css
-:root{
-  --bg:#0b1220; --card:#121a2b; --muted:#94a3b8; --text:#d6e3ff; --border:#22304a;
-  --primary:#5aa2ff; --primary-2:#2e7cff; --chip:#1a2540;
-}
-*{box-sizing:border-box} html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
-.container{max-width:1200px;margin:0 auto;padding:0 16px}
-.site-header{border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);backdrop-filter:saturate(120%) blur(6px);position:sticky;top:0;z-index:10}
-.header-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
-.brand .logo{font-weight:800;letter-spacing:.8px}
-.brand .ai{color:var(--primary)}
-.badge{background:var(--chip);border:1px solid var(--border);padding:4px 8px;border-radius:999px;font-size:12px}
-.divider{display:inline-block;width:8px}
-.status{margin-left:8px;color:var(--muted)}
-.app{display:grid;grid-template-columns:240px 1fr;gap:16px;max-width:1300px;margin:18px auto;padding:0 16px}
-.sidebar{position:sticky;top:64px;align-self:start}
-.section{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;padding:10px}
-.section.small select{width:100%;margin-top:6px}
-.title{font-weight:700;margin-bottom:8px}
-.side-link{display:block;width:100%;text-align:left;border:1px solid var(--border);background:transparent;color:var(--text);padding:8px 10px;border-radius:8px;margin:6px 0;cursor:pointer}
-.side-link.is-active, .side-link:hover{border-color:var(--primary)}
-.content .panel{display:none}
-.content .panel.is-visible{display:block}
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:16px}
-.hstack{display:flex;gap:8px}
-.btn{border:1px solid var(--border);background:#152137;color:var(--text);border-radius:8px;padding:8px 12px;cursor:pointer}
-.btn-primary{background:linear-gradient(180deg,#2e7cff,#5aa2ff);border:0;color:#fff}
-.chat{display:flex;flex-direction:column;gap:10px}
-.chat-messages{height:420px;overflow:auto;border:1px solid var(--border);border-radius:10px;padding:10px;background:#0e1729}
-.chat-input{display:flex;gap:8px}
-.chat-input input{flex:1;border:1px solid var(--border);border-radius:10px;background:#0e1729;color:var(--text);padding:10px}
-.bubble{max-width:92%;padding:10px;border-radius:10px;margin:6px 0;white-space:pre-wrap}
-.bubble.user{background:#142139;border:1px solid var(--border)}
-.bubble.assistant{background:#101a31;border:1px solid var(--border)}
-.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:10px}
-.note{color:var(--muted)}
-.hide{display:none}
-.site-footer{border-top:1px solid var(--border);padding:20px 0;color:var(--muted);margin-top:20px}
-```
-
----
-
-## `assets/app.js`
-
-```js
-(() => {
-  // ---------- Config (set WORKER_URL in Step 2 when API is ready) ----------
-  const WORKER_URL = localStorage.getItem("elwyn:worker") || "https://YOUR-WORKER-DOMAIN";
-  document.getElementById("apiBase").textContent = WORKER_URL;
-
-  // ---------- Sidebar view switching ----------
-  const view = document.getElementById("view");
-  const links = [...document.querySelectorAll(".side-link")];
-  function show(name){
-    view.querySelectorAll(".panel").forEach(p=>p.classList.remove("is-visible"));
-    const panel = view.querySelector(`[data-panel="${name}"]`);
-    if (panel) panel.classList.add("is-visible");
-    links.forEach(b=>b.classList.toggle("is-active", b.dataset.view===name));
-  }
-  links.forEach(b=>b.addEventListener("click",()=>show(b.dataset.view)));
-
-  // ---------- Engine selection ----------
-  const engineSel = document.getElementById("engineSelect");
-  const engineBadge = document.getElementById("engineBadge");
-  function currentModel(){ return engineSel?.value || "latest"; }
-  engineSel?.addEventListener("change", ()=> { engineBadge.textContent = `engine: ${currentModel()}`; });
-
-  // ---------- Ping API ----------
-  (async () => {
-    const st = document.getElementById("apiStatus");
-    try {
-      const r = await fetch(`${WORKER_URL}/v1/health`, { cache:"no-store" });
-      const j = await r.json().catch(()=>null);
-      st.textContent = (j && j.ok) ? `online (${j.latest||"latest"})` : "error";
-    } catch { st.textContent = "offline"; }
-  })();
-
-  // ---------- Chat ----------
-  const chatLog = document.getElementById("chatLog");
-  const chatForm = document.getElementById("chatForm");
-  const chatBox  = document.getElementById("chatBox");
-  const hist = JSON.parse(localStorage.getItem("elwyn:chat")||"[]");
-  function addBubble(role, text){
-    const d = document.createElement("div");
-    d.className = "bubble " + (role==="user"?"user":"assistant");
-    d.textContent = text;
-    chatLog.appendChild(d); chatLog.scrollTop = chatLog.scrollHeight;
-  }
-  function save(){ localStorage.setItem("elwyn:chat", JSON.stringify(hist)); }
-  hist.forEach(m=>addBubble(m.role,m.content));
-
-  chatForm?.addEventListener("submit", async (e)=>{
-    e.preventDefault();
-    const text = (chatBox.value||"").trim(); if(!text) return;
-    chatBox.value = "";
-    hist.push({ role:"user", content:text }); addBubble("user", text); save();
-    addBubble("assistant","…thinking…");
-
-    try{
-      const r = await fetch(`${WORKER_URL}/v1/chat`, {
-        method:"POST",
-        headers:{ "content-type": "application/json" },
-        body: JSON.stringify({ model: currentModel(), messages: hist })
-      });
-      const j = await r.json().catch(()=> ({}));
-      const reply = (j.reply || "(no reply)") + (j.modelUsed ? `\n\n— via ${j.modelUsed}${j.note ? " • "+j.note : ""}` : "");
-      hist.push({ role:"assistant", content: reply }); save();
-      addBubble("assistant", reply);
-    }catch(err){
-      addBubble("assistant", "Server error: " + (err?.message||err));
-    }
-  });
-
-  // ---------- Text → Image ----------
-  const imgForm = document.getElementById("imgForm");
-  const imgPrompt = document.getElementById("imgPrompt");
-  const imgOut = document.getElementById("imgOut");
-  imgForm?.addEventListener("submit", async (e)=>{
-    e.preventDefault();
-    const p = (imgPrompt.value||"").trim(); if(!p) return;
-    imgOut.innerHTML = `<div class="note">Generating…</div>`;
-    try{
-      const r = await fetch(`${WORKER_URL}/v1/image`, {
-        method:"POST",
-        headers:{ "content-type":"application/json" },
-        body: JSON.stringify({ prompt: p, size:"1024x1024" })
-      });
-      const j = await r.json();
-      if (j.ok && j.image_b64) {
-        const img = new Image();
-        img.src = "data:image/png;base64," + j.image_b64;
-        img.alt = "generated image";
-        img.style.width = "100%";
-        imgOut.innerHTML = ""; imgOut.appendChild(img);
-      } else {
-        imgOut.innerHTML = `<div class="note">Error: ${j.error || "failed"}</div>`;
-      }
-    }catch(err){ imgOut.innerHTML = `<div class="note">Server error: ${err}`; }
-  });
-
-  // ---------- Placeholders (wired in later steps) ----------
-  document.getElementById("vidForm")?.addEventListener("submit",(e)=>{ e.preventDefault(); document.getElementById("vidOut").textContent="Queued (API wiring next)…"; });
-  document.getElementById("audForm")?.addEventListener("submit",(e)=>{ e.preventDefault(); document.getElementById("audOut").textContent="Queued (API wiring next)…"; });
-})();
-```
