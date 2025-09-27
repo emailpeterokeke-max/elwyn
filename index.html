@@ -4,44 +4,96 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Elwyn AI</title>
-  <meta name="theme-color" content="#7A012E" />
+  <meta name="theme-color" content="#7A1E2C" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
   <style>
-    :root{ --bg:#0d1015; --card:#121722; --muted:#9db0c7; --accent:#7A012E; --chip:#2b2f3a; --ok:#6bd899; --err:#ff8a8a; --bd:#1f2633; }
+    /* === Elwyn palette (original, higher contrast) === */
+    :root{
+      --burgundy:#7A1E2C; --burgundy-2:#8F2A3A; --rose:#B34A59;
+      --ink:#0f1317; --panel:#12181f; --muted:#a9b1bd; --text:#e9eef3; --line:#233041;
+      --success:#49d19a; --shadow:0 8px 24px rgba(0,0,0,.35);
+    }
+
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:#e7eef7;font-family:Inter,system-ui,sans-serif}
-    .topbar{background:linear-gradient(180deg,#8b1839,#5c0f24); padding:10px 16px; position:sticky; top:0; z-index:5}
-    .wrap{max-width:1100px; margin:0 auto; display:flex; align-items:center; gap:12px}
-    .brand{font-weight:700}
-    .chip{background:var(--chip); padding:4px 10px; border-radius:999px; font-size:12px}
-    .chip.ok{background:#16331f; color:var(--ok)} .chip.err{background:#3a2020; color:var(--err)}
-    .engine{margin-left:auto; background:var(--card); color:#e7eef7; border:1px solid var(--bd); padding:6px 8px; border-radius:8px}
-    .layout{max-width:1100px; margin:18px auto; display:grid; grid-template-columns:260px 1fr; gap:16px}
-    .card{background:var(--card); border:1px solid var(--bd); border-radius:12px; padding:12px}
-    .side-title{font-weight:600; margin-bottom:6px}
-    .side-link{display:block; width:100%; text-align:left; background:#0f141d; border:1px solid var(--bd); color:#dbe7f5; padding:8px 10px; border-radius:10px; margin:6px 0; cursor:pointer}
-    .side-link.is-active{outline:2px solid #2b374a}
-    .muted{color:var(--muted)}
-    .row{display:flex; gap:8px; align-items:center}
-    .btn{background:#1a2130; color:#dbe7f5; border:1px solid var(--bd); padding:8px 12px; border-radius:10px; cursor:pointer}
-    .btn.primary{background:#1f2a3e; border-color:#2b3b55}
-    textarea{width:100%; background:#0f141d; color:#e7eef7; border:1px solid var(--bd); border-radius:10px; padding:10px; resize:vertical}
-    .chat-log{display:flex; flex-direction:column; gap:8px; max-height:420px; overflow:auto; background:#0f141d; border:1px solid var(--bd); border-radius:10px; padding:10px}
-    .bubble{background:#0f141d; border:1px solid var(--bd); border-radius:10px; padding:10px}
-    .bubble.user{background:#101826} .bubble.assistant{background:#10141f}
-    .panel{display:none} .panel.is-visible{display:block}
-    .footer{max-width:1100px; margin:30px auto; color:#aab6c8}
-    .link{color:#c9d7ee}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text);
+      background:radial-gradient(1200px 800px at -10% -10%, #1a212a 0%, #0e1216 60%) fixed;
+    }
+
+    /* Top bar */
+    .topbar{
+      background:linear-gradient(90deg,var(--burgundy) 0%,var(--burgundy-2) 100%);
+      border-bottom:1px solid rgba(255,255,255,.06);
+      position:sticky; top:0; z-index:5;
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;gap:18px}
+    .brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none}
+    .logo{width:34px;height:34px;border-radius:8px;background:#fff;color:var(--burgundy);display:grid;place-items:center;font-weight:800;box-shadow:var(--shadow)}
+    .brand-text strong{font-weight:800}.brand-text .sub{opacity:.9;font-weight:700}
+    .chip{padding:6px 10px;border-radius:999px;font-size:12px;background:rgba(255,255,255,.12);color:#fff}
+    .chip.ok{background:rgba(73,209,154,.18);color:#c9ffe9}
+    .chip.err{background:rgba(255,138,138,.18);color:#ffd1d1}
+    .engine{margin-left:auto;appearance:none;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;padding:6px 10px;border-radius:8px}
+
+    /* Layout */
+    .layout{max-width:1100px;margin:24px auto;display:grid;grid-template-columns:260px 1fr;gap:18px;padding:0 18px}
+    .side{position:sticky;top:18px;align-self:start}
+    .side-group{background:rgba(18,24,31,.7);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
+    .side-title{font-weight:700;color:#fff;margin-bottom:8px}
+    .side-link{width:100%;text-align:left;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#0f151c;color:#e8edf3;margin-bottom:8px;cursor:pointer;transition:.15s}
+    .side-link.is-active,.side-link:hover{background:#17202a;border-color:#31455f}
+
+    /* Cards + content */
+    .content .card,.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px}
+    .card-head h2{margin:0 0 6px 0}.card-head .muted{margin:0;color:var(--muted)}
+    .muted{color:var(--muted)} .tiny{font-size:12px}
+
+    /* Chat */
+    .chat{display:grid;gap:12px}
+    .chat-log{max-height:420px;overflow:auto;border:1px dashed #243246;border-radius:12px;padding:12px;background:#0c1116}
+    .bubble{padding:10px 12px;border-radius:12px;margin:8px 0;line-height:1.45;white-space:pre-wrap}
+    .bubble.user{background:#151d26;border:1px solid #243246}
+    .bubble.assistant{background:rgba(122,30,44,.12);border:1px solid #3a2126}
+    .chat-input textarea{width:100%;resize:vertical;min-height:72px;border-radius:12px;border:1px solid #223045;padding:10px 12px;background:#0c1116;color:#e9eef3}
+
+    .row{display:flex;gap:10px;margin-top:10px}
+    .btn{appearance:none;border:1px solid #2a3a50;background:#0f151c;color:#e9eef3;padding:10px 14px;border-radius:10px;cursor:pointer;transition:.15s}
+    .btn:hover{background:#17202a}
+    .btn.primary{background:var(--burgundy);border-color:#8c2a3a}
+    .btn.primary:hover{background:#8F2A3A}
+
+    /* Image */
+    .img-out{margin-top:12px}.img-out img{border-radius:12px;border:1px solid #26364b;display:block}
+
+    /* Footer */
+    .footer{margin-top:28px;border-top:1px solid #1f2935;background:#0b0f13}
+    .foot{padding:18px;max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px;color:#a6afbb}
+    .foot .links{margin-left:auto;display:flex;gap:14px}
+    .foot a{color:#cfd8e3;text-decoration:none}.foot a:hover{color:#fff}
+
+    .panel{display:none}.panel.is-visible{display:block}
+    code{background:#0c1116;padding:2px 6px;border-radius:6px;border:1px solid #213048}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
     .debug{margin-top:10px;font-size:12px;white-space:pre-wrap;color:#aab6c8}
   </style>
 </head>
+
 <body>
+  <!-- Top bar -->
   <header class="topbar">
     <div class="wrap">
-      <div class="brand">Elwyn AI</div>
+      <a class="brand" href="#">
+        <div class="logo">E</div>
+        <div class="brand-text">
+          <strong>Elwyn AI</strong>
+        </div>
+      </a>
       <div class="chip" id="apiStatus">checking…</div>
-      <select id="engineSelect" class="engine">
+      <select id="engineSelect" class="engine" aria-label="Model">
         <option value="latest" selected>Latest (auto)</option>
         <option value="gpt-5-thinking">gpt-5-thinking</option>
         <option value="gpt-5">gpt-5</option>
@@ -51,30 +103,37 @@
     </div>
   </header>
 
+  <!-- Main -->
   <main class="layout">
-    <aside>
-      <div class="card">
+    <!-- Sidebar -->
+    <aside class="side">
+      <div class="side-group">
         <div class="side-title">Tools</div>
         <button class="side-link is-active" data-view="chat">Chat</button>
         <button class="side-link" data-view="image">Text — Image</button>
         <button class="side-link" data-view="audio">Text — Sound (soon)</button>
         <button class="side-link" data-view="video">Text — Video (soon)</button>
       </div>
-      <div class="card">
+      <div class="side-group small">
         <div class="side-title">About</div>
-        <p class="muted" style="font-size:13px">One page interface for global-scale AI.</p>
-        <p class="muted" style="font-size:13px">API: <code>/api</code></p>
+        <p class="muted">One page interface for global-scale AI.</p>
+        <p class="muted tiny">API: <code>/api</code></p>
       </div>
     </aside>
 
-    <section id="view">
+    <!-- Views -->
+    <section id="view" class="content">
+      <!-- Chat -->
       <section class="panel is-visible" data-panel="chat">
         <div class="card">
-          <h2>Ask Elwyn AI</h2>
-          <p class="muted">Helpful, concise assistance. “Latest” falls back if unavailable.</p>
+          <div class="card-head">
+            <h2>Ask Elwyn AI</h2>
+            <p class="muted">Helpful, concise assistance. “Latest” falls back gracefully.</p>
+          </div>
           <div class="chat">
-            <div id="chatLog" class="chat-log"></div>
+            <div id="chatLog" class="chat-log" aria-live="polite"></div>
             <form id="chatForm" class="chat-input">
+              <label class="tiny muted" for="chatBox">Message</label>
               <textarea id="chatBox" rows="4" placeholder="Ask anything…" autocomplete="off"></textarea>
               <div class="row">
                 <button class="btn primary" type="submit" id="sendBtn">Send</button>
@@ -86,104 +145,165 @@
         </div>
       </section>
 
+      <!-- Image -->
       <section class="panel" data-panel="image">
         <div class="card">
-          <h2>Text → Image</h2>
-          <form id="imgForm">
+          <div class="card-head">
+            <h2>Text → Image</h2>
+            <p class="muted">Generates images via the Worker’s `/v1/image` endpoint.</p>
+          </div>
+          <form id="imgForm" class="form">
+            <label class="tiny muted" for="imgPrompt">Prompt</label>
             <textarea id="imgPrompt" rows="3" placeholder="Describe the image…"></textarea>
             <div class="row"><button class="btn primary" type="submit">Generate</button></div>
           </form>
-          <div id="imgOut" class="muted" style="margin-top:10px"></div>
+          <div id="imgOut" class="img-out"></div>
         </div>
       </section>
 
-      <section class="panel" data-panel="audio"><div class="card"><h2>Text → Sound</h2><form id="audForm"><button class="btn" type="submit">Try (soon)</button></form><pre id="audOut" class="muted"></pre></div></section>
-      <section class="panel" data-panel="video"><div class="card"><h2>Text → Video</h2><form id="vidForm"><button class="btn" type="submit">Try (soon)</button></form><pre id="vidOut" class="muted"></pre></div></section>
+      <!-- Placeholders -->
+      <section class="panel" data-panel="audio">
+        <div class="card">
+          <h2>Text → Sound</h2>
+          <form id="audForm"><button class="btn" type="submit">Try (soon)</button></form>
+          <pre id="audOut" class="muted"></pre>
+        </div>
+      </section>
+
+      <section class="panel" data-panel="video">
+        <div class="card">
+          <h2>Text → Video</h2>
+          <form id="vidForm"><button class="btn" type="submit">Try (soon)</button></form>
+          <pre id="vidOut" class="muted"></pre>
+        </div>
+      </section>
     </section>
   </main>
 
-  <footer class="footer">© 2025 Elwyn AI</footer>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="foot">
+      <div>© 2025 Elwyn AI</div>
+      <div class="links"></div>
+    </div>
+  </footer>
 
+  <!-- Inline logic (uses /api proxy) -->
   <script>
-    // === CONFIG ===
-    const VERSION = "inline-v1";
+    const VERSION = "inline-v2";
     const WORKER_URL = "/api";
     const DEFAULT_MODEL = "latest";
     const $ = (id) => document.getElementById(id);
     const currentModel = () => $("engineSelect")?.value || DEFAULT_MODEL;
 
-    // === Health (+visible version) ===
-    (async ()=>{
-      const st = $("apiStatus"), dbg = $("debug");
+    // Status chip helper
+    function setStatus(text, cls){
+      const st = $("apiStatus");
       if (!st) return;
-      st.textContent = "checking… • " + VERSION;
+      st.textContent = `${text} • ${VERSION}`;
+      st.classList.remove("ok","err");
+      if (cls) st.classList.add(cls);
+    }
+
+    // Health
+    (async ()=>{
+      setStatus("checking…");
       try{
         const r = await fetch(`${WORKER_URL}/v1/health?cb=${Date.now()}`, { cache:"no-store" });
         const raw = await r.text(); let j; try{ j=JSON.parse(raw);}catch{}
-        if (j?.ok) { st.textContent = `online (${j.latest||"latest"}) • ${VERSION}`; st.classList.add("ok"); }
-        else { st.textContent = `error (${r.status}) • ${VERSION}`; st.classList.add("err"); }
-        if (dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
-      }catch(e){ st.textContent = `offline • ${VERSION}`; st.classList.add("err"); if($("debug")) $("debug").textContent = String(e); }
-    })();
-
-    // === Sidebar ===
-    (()=>{ const view=$("view"); const links=[...document.querySelectorAll(".side-link")];
-      function show(name){ view.querySelectorAll(".panel").forEach(p=>p.classList.remove("is-visible"));
-        view.querySelector(`[data-panel="\${name}"]`)?.classList.add("is-visible");
-        links.forEach(b=>b.classList.toggle("is-active", b.dataset.view===name));
+        if (j?.ok) setStatus(`online (${j.latest||"latest"})`, "ok");
+        else setStatus(`error (${r.status})`, "err");
+        const dbg = $("debug"); if (dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
+      } catch(e){
+        setStatus("offline", "err");
+        const dbg = $("debug"); if (dbg) dbg.textContent = String(e);
       }
-      links.forEach(b=>b.addEventListener("click", ()=>show(b.dataset.view)));
     })();
 
-    // === Chat ===
-    (()=>{ const log=$("chatLog"), form=$("chatForm"), box=$("chatBox"), dbg=$("debug");
-      if(!log||!form||!box) return;
-      const hist = JSON.parse(localStorage.getItem("elwyn:chat")||"[]");
-      const add=(role,text)=>{ const d=document.createElement("div"); d.className="bubble "+(role==="user"?"user":"assistant"); d.textContent=text; log.appendChild(d); log.scrollTop=log.scrollHeight; };
-      const save=()=>localStorage.setItem("elwyn:chat", JSON.stringify(hist));
+    // Sidebar switching (FIXED selector)
+    (() => {
+      const view = $("view");
+      const links = [...document.querySelectorAll(".side-link")];
+      if (!view || !links.length) return;
+      function show(name){
+        view.querySelectorAll(".panel").forEach(p=>p.classList.remove("is-visible"));
+        view.querySelector('[data-panel="'+name+'"]')?.classList.add("is-visible");
+        links.forEach(b=>b.classList.toggle("is-active", b.dataset.view === name));
+      }
+      links.forEach(b=>b.addEventListener("click", () => show(b.dataset.view)));
+    })();
+
+    // Chat
+    (() => {
+      const log = $("chatLog"), form = $("chatForm"), box = $("chatBox"), dbg = $("debug");
+      if (!log || !form || !box) return;
+
+      const hist = JSON.parse(localStorage.getItem("elwyn:chat") || "[]");
+      const add  = (role,text)=>{ const d=document.createElement("div"); d.className="bubble "+(role==="user"?"user":"assistant"); d.textContent=text; log.appendChild(d); log.scrollTop=log.scrollHeight; };
+      const save = ()=> localStorage.setItem("elwyn:chat", JSON.stringify(hist));
       hist.forEach(m=>add(m.role,m.content));
+
       $("clearChat")?.addEventListener("click",()=>{ localStorage.removeItem("elwyn:chat"); log.innerHTML=""; });
+
       form.addEventListener("submit", async (e)=>{
         e.preventDefault();
         const text=(box.value||"").trim(); if(!text) return;
         box.value=""; hist.push({role:"user",content:text}); add("user",text); save();
+
         const thinking=document.createElement("div"); thinking.className="bubble assistant"; thinking.textContent="…thinking…";
         log.appendChild(thinking); log.scrollTop=log.scrollHeight;
+
         try{
-          const r = await fetch(`${WORKER_URL}/v1/chat`,{
+          const r = await fetch(`${WORKER_URL}/v1/chat`, {
             method:"POST", headers:{ "content-type":"application/json" },
             body: JSON.stringify({ model: currentModel(), messages: hist })
           });
-          const raw=await r.text(); let j; try{ j=JSON.parse(raw);}catch{}
-          const extra = j?.modelUsed ? `\\n\\n— via \${j.modelUsed}` : "";
-          const reply = j?.ok ? (j.reply||"(no reply)")+extra : `Error (\${r.status}): \${j?.error||raw}`;
+          const raw = await r.text(); let j; try{ j=JSON.parse(raw);}catch{}
+          const extra = j?.modelUsed ? `\n\n— via ${j.modelUsed}` : "";
+          const reply = j?.ok ? (j.reply||"(no reply)")+extra : `Error (${r.status}): ${j?.error || raw}`;
           thinking.remove(); hist.push({role:"assistant",content:reply}); save(); add("assistant", reply);
-          if(dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
-        }catch(err){ thinking.remove(); add("assistant","Network error: "+(err?.message||err)); if(dbg) dbg.textContent = String(err); }
+          if (dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
+        }catch(err){
+          thinking.remove(); add("assistant","Network error: "+(err?.message||err));
+          if (dbg) dbg.textContent = String(err);
+        }
       });
     })();
 
-    // === Image ===
-    (()=>{ const form=$("imgForm"), input=$("imgPrompt"), out=$("imgOut"), dbg=$("debug");
-      if(!form||!input||!out) return;
+    // Text → Image
+    (() => {
+      const form = $("imgForm"), input = $("imgPrompt"), out = $("imgOut"), dbg = $("debug");
+      if (!form || !input || !out) return;
+
       form.addEventListener("submit", async (e)=>{
         e.preventDefault();
         const p=(input.value||"").trim(); if(!p) return;
-        out.innerHTML='<div class="muted">Generating…</div>';
+        out.innerHTML = '<div class="muted">Generating…</div>';
         try{
-          const r = await fetch(`${WORKER_URL}/v1/image`,{
+          const r = await fetch(`${WORKER_URL}/v1/image`, {
             method:"POST", headers:{ "content-type":"application/json" },
             body: JSON.stringify({ prompt:p, size:"1024x1024" })
           });
-          const raw=await r.text(); let j; try{ j=JSON.parse(raw);}catch{}
+          const raw = await r.text(); let j; try{ j=JSON.parse(raw);}catch{}
           if (j?.ok && j.image_b64) {
-            const img=new Image(); img.src="data:image/png;base64,"+j.image_b64; img.alt="generated image"; img.style.width="100%";
-            out.innerHTML=""; out.appendChild(img);
-          } else { out.innerHTML = `<span class="muted">Error (\${r.status}): \${j?.error||raw}</span>`; }
-          if(dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
-        }catch(err){ out.innerHTML = `<span class="muted">Network error: \${(err?.message||err)}</span>`; if(dbg) dbg.textContent = String(err); }
+            const img = new Image();
+            img.src = "data:image/png;base64," + j.image_b64;
+            img.alt = "generated image"; img.style.width = "100%";
+            out.innerHTML = ""; out.appendChild(img);
+          } else {
+            out.innerHTML = `<span class="muted">Error (${r.status}): ${j?.error || raw}</span>`;
+          }
+          if (dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
+        }catch(err){
+          out.innerHTML = `<span class="muted">Network error: ${(err?.message||err)}</span>`;
+          if (dbg) dbg.textContent = String(err);
+        }
       });
     })();
+
+    // Placeholders
+    $("audForm")?.addEventListener("submit",(e)=>{ e.preventDefault(); $("audOut").textContent="Queued (API wiring next)…"; });
+    $("vidForm")?.addEventListener("submit",(e)=>{ e.preventDefault(); $("vidOut").textContent="Queued (API wiring next)…"; });
   </script>
 </body>
 </html>
