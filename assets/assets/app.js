@@ -1,8 +1,8 @@
 // app.js — health + sidebar nav + chat + image (via Vercel proxy)
 
 // ===== CONFIG =====
-const WORKER_URL = "/api";          // <-- use the Vercel rewrite, not workers.dev
-const DEFAULT_MODEL = "latest";     // worker maps "latest" to gpt-5-thinking (or falls back)
+const WORKER_URL = "/api";
+const DEFAULT_MODEL = "latest";
 function currentModel() {
   const sel = document.getElementById("engineSelect");
   return sel?.value || DEFAULT_MODEL;
