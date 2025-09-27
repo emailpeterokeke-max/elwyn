@@ -33,6 +33,7 @@
     .panel{display:none} .panel.is-visible{display:block}
     .footer{max-width:1100px; margin:30px auto; color:#aab6c8}
     .link{color:#c9d7ee}
+    .debug{margin-top:10px;font-size:12px;white-space:pre-wrap;color:#aab6c8}
   </style>
 </head>
 <body>
@@ -80,6 +81,7 @@
                 <button class="btn" type="button" id="clearChat">Clear</button>
               </div>
             </form>
+            <div id="debug" class="debug"></div>
           </div>
         </div>
       </section>
@@ -102,7 +104,7 @@
 
   <footer class="footer">© 2025 Elwyn AI</footer>
 
-  <!-- IMPORTANT: no inline script. All logic is in assets/app.js -->
-  <script src="/assets/app.js"></script>
+  <!-- IMPORTANT: load external JS only; cache-bust to avoid stale script -->
+  <script src="/assets/app.js?cb=3"></script>
 </body>
 </html>
