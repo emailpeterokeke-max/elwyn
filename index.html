@@ -8,10 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --bg:#0d1015; --card:#121722; --muted:#9db0c7; --accent:#7A012E;
-      --chip:#2b2f3a; --ok:#6bd899; --err:#ff8a8a; --bd:#1f2633;
-    }
+    :root{ --bg:#0d1015; --card:#121722; --muted:#9db0c7; --accent:#7A012E; --chip:#2b2f3a; --ok:#6bd899; --err:#ff8a8a; --bd:#1f2633; }
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:#e7eef7;font-family:Inter,system-ui,sans-serif}
     .topbar{background:linear-gradient(180deg,#8b1839,#5c0f24); padding:10px 16px; position:sticky; top:0; z-index:5}
@@ -43,7 +40,6 @@
     <div class="wrap">
       <div class="brand">Elwyn AI</div>
       <div class="chip" id="apiStatus">checking…</div>
-      <!-- Default to Latest (auto) -->
       <select id="engineSelect" class="engine">
         <option value="latest" selected>Latest (auto)</option>
         <option value="gpt-5-thinking">gpt-5-thinking</option>
@@ -66,12 +62,11 @@
       <div class="card">
         <div class="side-title">About</div>
         <p class="muted" style="font-size:13px">One page interface for global-scale AI.</p>
-        <p class="muted" style="font-size:13px">API: <code>elwyn.emailpeterokeke.workers.dev</code></p>
+        <p class="muted" style="font-size:13px">API: <code>/api</code></p>
       </div>
     </aside>
 
     <section id="view">
-      <!-- Chat -->
       <section class="panel is-visible" data-panel="chat">
         <div class="card">
           <h2>Ask Elwyn AI</h2>
@@ -89,7 +84,6 @@
         </div>
       </section>
 
-      <!-- Image -->
       <section class="panel" data-panel="image">
         <div class="card">
           <h2>Text → Image</h2>
@@ -101,28 +95,14 @@
         </div>
       </section>
 
-      <!-- Placeholders -->
-      <section class="panel" data-panel="audio">
-        <div class="card">
-          <h2>Text → Sound</h2>
-          <form id="audForm"><button class="btn" type="submit">Try (soon)</button></form>
-          <pre id="audOut" class="muted"></pre>
-        </div>
-      </section>
-
-      <section class="panel" data-panel="video">
-        <div class="card">
-          <h2>Text → Video</h2>
-          <form id="vidForm"><button class="btn" type="submit">Try (soon)</button></form>
-          <pre id="vidOut" class="muted"></pre>
-        </div>
-      </section>
+      <section class="panel" data-panel="audio"><div class="card"><h2>Text → Sound</h2><form id="audForm"><button class="btn" type="submit">Try (soon)</button></form><pre id="audOut" class="muted"></pre></div></section>
+      <section class="panel" data-panel="video"><div class="card"><h2>Text → Video</h2><form id="vidForm"><button class="btn" type="submit">Try (soon)</button></form><pre id="vidOut" class="muted"></pre></div></section>
     </section>
   </main>
 
   <footer class="footer">© 2025 Elwyn AI</footer>
 
-  <!-- Use the external script so logic stays in one place -->
+  <!-- IMPORTANT: no inline script. All logic is in assets/app.js -->
   <script src="/assets/app.js"></script>
 </body>
 </html>
