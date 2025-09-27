@@ -1,29 +1,40 @@
-// app.js — health + sidebar nav + chat + image (via Vercel proxy)
+// app.js — uses /api proxy; shows detailed errors in #debug
 
 // ===== CONFIG =====
 const WORKER_URL = "/api";
 const DEFAULT_MODEL = "latest";
+const $ = (id) => document.getElementById(id);
+
+// ===== Health badge (+debug) =====
+(async () => {
+  const st = $("apiStatus");
+  const dbg = $("debug");
+  if (!st) return;
+  st.textContent = "checking…";
+  try {
+    const res = await fetch(`${WORKER_URL}/v1/health?cb=${Date.now()}`, { cache: "no-store" });
+    const text = await res.text();
+    let j; try { j = JSON.parse(text); } catch { j = null; }
+    if (j?.ok) {
+      st.textContent = `online (${j.latest || "latest"})`;
+      st.classList.add("ok");
+      dbg && (dbg.textContent = JSON.stringify(j, null, 2));
+    } else {
+      st.textContent = "error";
+      st.classList.add("err");
+      dbg && (dbg.textContent = `Health non-ok. Status ${res.status}\n\n${text}`);
+    }
+  } catch (e) {
+    st.textContent = "offline";
+    st.classList.add("err");
+    $("debug") && (dbg.textContent = `Health fetch failed: ${e}`);
+  }
+})();
+
 function currentModel() {
   const sel = document.getElementById("engineSelect");
   return sel?.value || DEFAULT_MODEL;
 }
-
-// ===== Health badge =====
-(async () => {
-  const st = document.getElementById("apiStatus");
-  if (!st) return;
-  st.textContent = "checking…";
-  try {
-    const r = await fetch(`${WORKER_URL}/v1/health`, { cache: "no-store" });
-    const j = await r.json().catch(() => null);
-    st.textContent = j?.ok ? `online (${j.latest || "latest"})` : "error";
-    st.classList.toggle("ok", !!j?.ok);
-    st.classList.toggle("err", !j?.ok);
-  } catch {
-    st.textContent = "offline";
-    st.classList.add("err");
-  }
-})();
 
 // ===== Sidebar switching =====
 (() => {
@@ -40,31 +51,23 @@ function currentModel() {
 
 // ===== Chat =====
 (() => {
-  const log  = document.getElementById("chatLog");
-  const form = document.getElementById("chatForm");
-  const box  = document.getElementById("chatBox");
+  const log  = $("chatLog");
+  const form = $("chatForm");
+  const box  = $("chatBox");
+  const dbg  = $("debug");
   if (!log || !form || !box) return;
 
   const hist = JSON.parse(localStorage.getItem("elwyn:chat") || "[]");
-  function add(role, text) {
-    const d = document.createElement("div");
-    d.className = "bubble " + (role === "user" ? "user" : "assistant");
-    d.textContent = text;
-    log.appendChild(d); log.scrollTop = log.scrollHeight;
-  }
-  function save() { localStorage.setItem("elwyn:chat", JSON.stringify(hist)); }
+  const add = (role, text) => { const d=document.createElement("div"); d.className="bubble "+(role==="user"?"user":"assistant"); d.textContent=text; log.appendChild(d); log.scrollTop=log.scrollHeight; };
+  const save = () => localStorage.setItem("elwyn:chat", JSON.stringify(hist));
   hist.forEach(m => add(m.role, m.content));
 
-  document.getElementById("clearChat")?.addEventListener("click", () => {
-    localStorage.removeItem("elwyn:chat");
-    log.innerHTML = "";
-  });
+  $("clearChat")?.addEventListener("click", () => { localStorage.removeItem("elwyn:chat"); log.innerHTML = ""; });
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const text = (box.value || "").trim(); if (!text) return;
-    box.value = "";
-    hist.push({ role: "user", content: text }); add("user", text); save();
+    box.value = ""; hist.push({ role: "user", content: text }); add("user", text); save();
 
     const thinking = document.createElement("div");
     thinking.className = "bubble assistant"; thinking.textContent = "…thinking…";
@@ -76,25 +79,28 @@ function currentModel() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ model: currentModel(), messages: hist })
       });
-      const j = await r.json().catch(() => ({}));
-      const extra = j.modelUsed ? `\n\n— via ${j.modelUsed}` : "";
-      const reply = (j.reply || "(no reply)") + extra;
+      const raw = await r.text();
+      let j; try { j = JSON.parse(raw); } catch { j = null; }
+      const extra = j?.modelUsed ? `\n\n— via ${j.modelUsed}` : "";
+      const reply = j?.ok ? (j.reply || "(no reply)") + extra : `Error (${r.status}): ${j?.error || raw}`;
 
       thinking.remove();
-      hist.push({ role: "assistant", content: reply }); save();
-      add("assistant", reply);
+      hist.push({ role: "assistant", content: reply }); save(); add("assistant", reply);
+      dbg && (dbg.textContent = j ? JSON.stringify(j, null, 2) : raw);
     } catch (err) {
       thinking.remove();
-      add("assistant", "Server error: " + (err?.message || err));
+      add("assistant", "Network error: " + (err?.message || err));
+      dbg && (dbg.textContent = "Chat fetch failed: " + (err?.message || err));
     }
   });
 })();
 
 // ===== Text → Image =====
 (() => {
-  const form = document.getElementById("imgForm");
-  const input = document.getElementById("imgPrompt");
-  const out   = document.getElementById("imgOut");
+  const form = $("imgForm");
+  const input = $("imgPrompt");
+  const out   = $("imgOut");
+  const dbg   = $("debug");
   if (!form || !input || !out) return;
 
   form.addEventListener("submit", async (e) => {
@@ -107,7 +113,8 @@ function currentModel() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ prompt: p, size: "1024x1024" })
       });
-      const j = await r.json().catch(() => ({}));
+      const raw = await r.text();
+      let j; try { j = JSON.parse(raw); } catch { j = null; }
       if (j?.ok && j.image_b64) {
         const img = new Image();
         img.src = "data:image/png;base64," + j.image_b64;
@@ -116,18 +123,12 @@ function currentModel() {
         out.innerHTML = "";
         out.appendChild(img);
       } else {
-        out.innerHTML = `<div class="muted">Error: ${j?.error || "failed"}</div>`;
+        out.innerHTML = `<div class="muted">Error (${r.status}): ${j?.error || raw}</div>`;
       }
+      dbg && (dbg.textContent = j ? JSON.stringify(j, null, 2) : raw);
     } catch (err) {
-      out.innerHTML = `<div class="muted">Server error: ${(err?.message || err)}</div>`;
+      out.innerHTML = `<div class="muted">Network error: ${(err?.message || err)}</div>`;
+      dbg && (dbg.textContent = "Image fetch failed: " + (err?.message || err));
     }
   });
 })();
-
-// ===== Placeholders =====
-document.getElementById("audForm")?.addEventListener("submit", (e) => {
-  e.preventDefault(); document.getElementById("audOut").textContent = "Queued (API wiring next)…";
-});
-document.getElementById("vidForm")?.addEventListener("submit", (e) => {
-  e.preventDefault(); document.getElementById("vidOut").textContent = "Queued (API wiring next)…";
-});
