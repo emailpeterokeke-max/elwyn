@@ -1,30 +1,35 @@
-// Elwyn AI — App wiring (chat + image) via Vercel proxy to Worker.
+// Elwyn AI — App wiring (chat + image) via Vercel proxy to Cloudflare Worker.
+// Uses your working Vercel host so it loads on work Wi-Fi.
 
-// ==== CONFIG ====
-const WORKER_URL = "https://elwyn.io/api"; // proxied path
+const WORKER_URL = "https://elwyn-ivory.vercel.app/api";   // ← proxy base
+const BASE = WORKER_URL.replace(/\/$/, "");
+
+// Optional: engine dropdown support (fall back to "latest")
 function currentModel() {
-  const sel = document.getElementById("engineSelect");
-  return sel?.value || "latest";
+  return document.getElementById("engineSelect")?.value || "latest";
 }
 
-// ==== Health badge ====
+/* ================= Health badge ================= */
 (async () => {
   const st = document.getElementById("apiStatus");
   if (!st) return;
   try {
-    const r = await fetch(`${WORKER_URL}/v1/health`, { cache: "no-store" });
+    const r = await fetch(`${BASE}/v1/health`, { cache: "no-store" });
     const j = await r.json().catch(() => null);
     st.textContent = j?.ok ? `online (${j.latest || "latest"})` : "error";
+    st.style.color = j?.ok ? "#6bd899" : "#ff8b8b";
   } catch {
     st.textContent = "offline";
+    st.style.color = "#ff8b8b";
   }
 })();
 
-// ==== View switcher ====
+/* ================= Sidebar view switcher ================= */
 (() => {
   const view = document.getElementById("view");
   const links = [...document.querySelectorAll(".side-link")];
   if (!view || !links.length) return;
+
   function show(name) {
     view.querySelectorAll(".panel").forEach(p => p.classList.remove("is-visible"));
     view.querySelector(`[data-panel="${name}"]`)?.classList.add("is-visible");
@@ -33,51 +38,64 @@ function currentModel() {
   links.forEach(b => b.addEventListener("click", () => show(b.dataset.view)));
 })();
 
-// ==== Chat ====
+/* ================= Chat ================= */
 (() => {
-  const chatLog  = document.getElementById("chatLog");
-  const chatForm = document.getElementById("chatForm");
-  const chatBox  = document.getElementById("chatBox");
-  if (!chatForm || !chatLog || !chatBox) return;
+  const log  = document.getElementById("chatLog");
+  const form = document.getElementById("chatForm");
+  const box  = document.getElementById("chatBox");
+  if (!form || !log || !box) return;
 
-  const hist = JSON.parse(localStorage.getItem("elwyn:chat") || "[]");
-  function add(role, text) {
+  const histKey = "elwyn:chat";
+  const hist = JSON.parse(localStorage.getItem(histKey) || "[]");
+
+  const add = (role, text) => {
     const d = document.createElement("div");
     d.className = "bubble " + (role === "user" ? "user" : "assistant");
     d.textContent = text;
-    chatLog.appendChild(d);
-    chatLog.scrollTop = chatLog.scrollHeight;
-  }
-  function save() { localStorage.setItem("elwyn:chat", JSON.stringify(hist)); }
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  };
+  const save = () => localStorage.setItem(histKey, JSON.stringify(hist));
+
+  // Populate previous session
   hist.forEach(m => add(m.role, m.content));
 
+  // Optional clear button
   document.getElementById("clearChat")?.addEventListener("click", () => {
-    localStorage.removeItem("elwyn:chat");
-    chatLog.innerHTML = "";
+    localStorage.removeItem(histKey);
+    log.innerHTML = "";
   });
 
-  chatForm.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", async e => {
     e.preventDefault();
-    const text = (chatBox.value || "").trim(); if (!text) return;
-    chatBox.value = "";
-    hist.push({ role: "user", content: text }); add("user", text); save();
+    const text = (box.value || "").trim();
+    if (!text) return;
+    box.value = "";
 
+    hist.push({ role: "user", content: text });
+    add("user", text);
+    save();
+
+    // thinking bubble
     const thinking = document.createElement("div");
-    thinking.className = "bubble assistant"; thinking.textContent = "…thinking…";
-    chatLog.appendChild(thinking); chatLog.scrollTop = chatLog.scrollHeight;
+    thinking.className = "bubble assistant";
+    thinking.textContent = "…thinking…";
+    log.appendChild(thinking);
+    log.scrollTop = log.scrollHeight;
 
     try {
-      const r = await fetch(`${WORKER_URL}/v1/chat`, {
+      const r = await fetch(`${BASE}/v1/chat`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ model: currentModel(), messages: hist })
       });
       const j = await r.json().catch(() => ({}));
-      const extra = j.modelUsed ? `\n\n— via ${j.modelUsed}${j.note ? " • " + j.note : ""}` : "";
-      const reply = (j.reply || "(no reply)") + extra;
+      const extra = j?.modelUsed ? `\n\n— via ${j.modelUsed}${j.note ? " • " + j.note : ""}` : "";
+      const reply = (j?.reply || "(no reply)") + extra;
 
       thinking.remove();
-      hist.push({ role: "assistant", content: reply }); save();
+      hist.push({ role: "assistant", content: reply });
+      save();
       add("assistant", reply);
     } catch (err) {
       thinking.remove();
@@ -86,19 +104,21 @@ function currentModel() {
   });
 })();
 
-// ==== Text → Image ====
+/* ================= Text → Image ================= */
 (() => {
   const form = document.getElementById("imgForm");
   const input = document.getElementById("imgPrompt");
   const out   = document.getElementById("imgOut");
   if (!form || !input || !out) return;
 
-  form.addEventListener("submit", async (e) => {
+  form.addEventListener("submit", async e => {
     e.preventDefault();
-    const p = (input.value || "").trim(); if (!p) return;
+    const p = (input.value || "").trim();
+    if (!p) return;
+
     out.innerHTML = `<div class="muted">Generating…</div>`;
     try {
-      const r = await fetch(`${WORKER_URL}/v1/image`, {
+      const r = await fetch(`${BASE}/v1/image`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ prompt: p, size: "1024x1024" })
@@ -120,12 +140,14 @@ function currentModel() {
   });
 })();
 
-// ==== Placeholders ====
-document.getElementById("audForm")?.addEventListener("submit", (e) => {
+/* ================= Placeholders (wire later) ================= */
+document.getElementById("audForm")?.addEventListener("submit", e => {
   e.preventDefault();
-  document.getElementById("audOut").textContent = "Queued (API wiring next)…";
+  const n = document.getElementById("audOut");
+  if (n) n.textContent = "Queued (API wiring next)…";
 });
-document.getElementById("vidForm")?.addEventListener("submit", (e) => {
+document.getElementById("vidForm")?.addEventListener("submit", e => {
   e.preventDefault();
-  document.getElementById("vidOut").textContent = "Queued (API wiring next)…";
+  const n = document.getElementById("vidOut");
+  if (n) n.textContent = "Queued (API wiring next)…";
 });
