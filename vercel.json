@@ -1,5 +1,8 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://elwyn.emailpeterokeke.workers.dev/$1" }
+    {
+      "source": "/api/(.*)",
+      "destination": "https://elwyn.emailpeterokeke.workers.dev/$1"
+    }
   ]
 }
