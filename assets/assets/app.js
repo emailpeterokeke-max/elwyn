@@ -1,9 +1,8 @@
-// Elwyn AI — App wiring (chat + image). Uses your Worker directly.
+// Elwyn AI — App wiring (chat + image). Uses your custom API domain.
 
 // ==== CONFIG ====
-const WORKER_URL = "https://elwyn.emailpeterokeke.workers.dev"; // <- exact URL
+const WORKER_URL = "https://api.elwyn.io"; // <- first-party API domain
 function currentModel() {
-  // engine dropdown is optional; default to "latest" (maps to GPT-5 Thinking in Worker)
   const sel = document.getElementById("engineSelect");
   return sel?.value || "latest";
 }
