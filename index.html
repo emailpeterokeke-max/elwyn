@@ -6,24 +6,15 @@
   <title>Elwyn AI — Assist. Create. Empower.</title>
   <meta name="theme-color" content="#7A1E2C" />
   <base href="/" />
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="/assets/styles.css" />
 </head>
 <body>
-  <!-- Header -->
   <header class="topbar">
     <div class="wrap">
-      <a class="brand" href="/">
-        <div class="logo">E</div>
-        <div class="brand-text">
-          <strong>Elwyn</strong> <span class="sub">AI</span>
-        </div>
-      </a>
-
+      <a class="brand" href="/"><div class="logo">E</div><div class="brand-text"><strong>Elwyn</strong> <span class="sub">AI</span></div></a>
       <nav class="topnav">
         <span class="chip success" id="apiStatus">checking…</span>
         <select id="engineSelect" class="engine">
@@ -37,9 +28,7 @@
     </div>
   </header>
 
-  <!-- Layout -->
   <main class="layout">
-    <!-- Sidebar -->
     <aside class="side">
       <div class="side-group">
         <div class="side-title">Tools</div>
@@ -48,7 +37,6 @@
         <button class="side-link" data-view="audio">Text → Sound (soon)</button>
         <button class="side-link" data-view="video">Text → Video (soon)</button>
       </div>
-
       <div class="side-group small">
         <div class="side-title">About</div>
         <p class="muted">One page interface for global-scale AI services inspired by Elwyn’s mission.</p>
@@ -56,16 +44,13 @@
       </div>
     </aside>
 
-    <!-- Content -->
     <section class="content" id="view">
-      <!-- Chat -->
       <section class="panel is-visible" data-panel="chat">
         <div class="card">
           <div class="card-head">
             <h2>Ask Elwyn AI</h2>
             <p class="muted">Helpful, concise assistance. “Latest” aims for GPT-5 Thinking when available.</p>
           </div>
-
           <div class="chat">
             <div id="chatLog" class="chat-log"></div>
             <form id="chatForm" class="chat-input">
@@ -79,28 +64,19 @@
         </div>
       </section>
 
-      <!-- Text → Image -->
       <section class="panel" data-panel="image">
         <div class="card">
-          <div class="card-head">
-            <h2>Text → Image</h2>
-            <p class="muted">High-quality images with GPT Image, with automatic fallback.</p>
-          </div>
-
+          <div class="card-head"><h2>Text → Image</h2><p class="muted">High-quality images with GPT Image, with automatic fallback.</p></div>
           <form id="imgForm" class="form">
             <textarea id="imgPrompt" rows="3" placeholder="e.g., warm, welcoming illustration of inclusive community support"></textarea>
-            <div class="row">
-              <button class="btn primary" type="submit">Generate</button>
-            </div>
+            <div class="row"><button class="btn primary" type="submit">Generate</button></div>
           </form>
           <div id="imgOut" class="img-out"></div>
         </div>
       </section>
 
-      <!-- Placeholders -->
       <section class="panel" data-panel="audio">
-        <div class="card">
-          <div class="card-head"><h2>Text → Sound</h2></div>
+        <div class="card"><div class="card-head"><h2>Text → Sound</h2></div>
           <p class="muted">Coming next: natural voices and audio prompts.</p>
           <form id="audForm"><button class="btn" type="submit">Try</button></form>
           <pre id="audOut" class="mono muted"></pre>
@@ -108,8 +84,7 @@
       </section>
 
       <section class="panel" data-panel="video">
-        <div class="card">
-          <div class="card-head"><h2>Text → Video</h2></div>
+        <div class="card"><div class="card-head"><h2>Text → Video</h2></div>
           <p class="muted">Short clips for explainers & promos (to be wired).</p>
           <form id="vidForm"><button class="btn" type="submit">Try</button></form>
           <pre id="vidOut" class="mono muted"></pre>
@@ -118,7 +93,6 @@
     </section>
   </main>
 
-  <!-- Footer -->
   <footer class="footer">
     <div class="wrap foot">
       <div>© 2025 Elwyn AI — crafted for clarity & care</div>
