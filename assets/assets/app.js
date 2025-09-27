@@ -1,8 +1,8 @@
 // app.js — health + sidebar nav + chat + image, with working listeners
 
 // ===== CONFIG =====
-const WORKER_URL = "https://elwyn.emailpeterokeke.workers.dev";
-const DEFAULT_MODEL = "gpt-4o";
+const WORKER_URL = "/api";                  // use Vercel proxy (works on any network)
+const DEFAULT_MODEL = "latest";             // let Worker decide (gpt-5-thinking if allowed)
 function currentModel() {
   const sel = document.getElementById("engineSelect");
   return sel?.value || DEFAULT_MODEL;
@@ -17,8 +17,11 @@ function currentModel() {
     const r = await fetch(`${WORKER_URL}/v1/health`, { cache: "no-store" });
     const j = await r.json().catch(() => null);
     st.textContent = j?.ok ? `online (${j.latest || "latest"})` : "error";
+    st.classList.toggle("ok", !!j?.ok);
+    st.classList.toggle("err", !j?.ok);
   } catch {
     st.textContent = "offline";
+    st.classList.add("err");
   }
 })();
 
