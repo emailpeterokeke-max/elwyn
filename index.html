@@ -1,89 +1,134 @@
 <!doctype html>
-<option value="gpt-4o-mini">gpt-4o-mini</option>
-</select>
-</div>
-</aside>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Elwyn AI — Assist. Create. Empower.</title>
+  <meta name="theme-color" content="#7A1E2C" />
+  <base href="/" />
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
-<section class="content" id="view">
-<!-- Chat -->
-<section class="panel is-visible" data-panel="chat">
-<div class="card">
-<h2>Chat</h2>
-<div class="chat">
-<div id="chatLog" class="chat-messages"></div>
-<form id="chatForm" class="chat-input" autocomplete="off">
-<input id="chatBox" type="text" placeholder="Ask anything…" />
-<button class="btn btn-primary" type="submit">Send</button>
-</form>
-</div>
-</div>
-</section>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="/">
+        <div class="logo">E</div>
+        <div class="brand-text">
+          <strong>Elwyn</strong> <span class="sub">AI</span>
+        </div>
+      </a>
 
+      <nav class="topnav">
+        <span class="chip success" id="apiStatus">checking…</span>
+        <select id="engineSelect" class="engine">
+          <option value="latest" selected>Latest (auto)</option>
+          <option value="gpt-5-thinking">GPT-5 Thinking</option>
+          <option value="gpt-5">GPT-5</option>
+          <option value="gpt-4o">GPT-4o</option>
+          <option value="gpt-4o-mini">GPT-4o mini</option>
+        </select>
+      </nav>
+    </div>
+  </header>
 
-<!-- Text → Image -->
-<section class="panel" data-panel="t2i">
-<div class="card">
-<h2>Text → Image</h2>
-<form id="imgForm" class="hstack" autocomplete="off">
-<input id="imgPrompt" type="text" placeholder="Describe the image…" />
-<button class="btn" type="submit">Generate</button>
-</form>
-<div id="imgOut" class="img-grid"></div>
-</div>
-</section>
+  <!-- Layout -->
+  <main class="layout">
+    <!-- Sidebar -->
+    <aside class="side">
+      <div class="side-group">
+        <div class="side-title">Tools</div>
+        <button class="side-link is-active" data-view="chat">Chat</button>
+        <button class="side-link" data-view="image">Text → Image</button>
+        <button class="side-link" data-view="audio">Text → Sound (soon)</button>
+        <button class="side-link" data-view="video">Text → Video (soon)</button>
+      </div>
 
+      <div class="side-group small">
+        <div class="side-title">About</div>
+        <p class="muted">One page interface for global-scale AI services inspired by Elwyn’s mission.</p>
+        <p class="muted tiny">API: <code>elwyn.emailpeterokeke.workers.dev</code></p>
+      </div>
+    </aside>
 
-<!-- Text → Video (API in Step 2/3) -->
-<section class="panel" data-panel="t2v">
-<div class="card">
-<h2>Text → Video</h2>
-<form id="vidForm" class="hstack" autocomplete="off">
-<input id="vidPrompt" type="text" placeholder="Describe the video…" />
-<button class="btn" type="submit">Render</button>
-</form>
-<div id="vidOut" class="note">Rendering pipeline connects in API step.</div>
-</div>
-</section>
+    <!-- Content -->
+    <section class="content" id="view">
+      <!-- Chat -->
+      <section class="panel is-visible" data-panel="chat">
+        <div class="card">
+          <div class="card-head">
+            <h2>Ask Elwyn AI</h2>
+            <p class="muted">Helpful, concise assistance. “Latest” aims for GPT-5 Thinking when available.</p>
+          </div>
 
+          <div class="chat">
+            <div id="chatLog" class="chat-log"></div>
+            <form id="chatForm" class="chat-input">
+              <textarea id="chatBox" rows="3" placeholder="Ask anything…" autocomplete="off"></textarea>
+              <div class="row">
+                <button class="btn primary" type="submit">Send</button>
+                <button class="btn" type="button" id="clearChat">Clear</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
 
-<!-- Text → Sound (API in Step 2/3) -->
-<section class="panel" data-panel="t2s">
-<div class="card">
-<h2>Text → Sound</h2>
-<form id="audForm" class="hstack" autocomplete="off">
-<input id="audPrompt" type="text" placeholder="Describe the sound/music…" />
-<button class="btn" type="submit">Synthesize</button>
-</form>
-<audio id="audPlayer" controls class="hide"></audio>
-<div id="audOut" class="note">Synthesis connects in API step.</div>
-</div>
-</section>
+      <!-- Text → Image -->
+      <section class="panel" data-panel="image">
+        <div class="card">
+          <div class="card-head">
+            <h2>Text → Image</h2>
+            <p class="muted">High-quality images with GPT Image, with automatic fallback.</p>
+          </div>
 
+          <form id="imgForm" class="form">
+            <textarea id="imgPrompt" rows="3" placeholder="e.g., warm, welcoming illustration of inclusive community support"></textarea>
+            <div class="row">
+              <button class="btn primary" type="submit">Generate</button>
+            </div>
+          </form>
+          <div id="imgOut" class="img-out"></div>
+        </div>
+      </section>
 
-<!-- Feature Options -->
-<section class="panel" data-panel="features">
-<div class="card">
-<h2>Feature Options</h2>
-<div class="grid two">
-<label>Temperature
-<input id="optTemp" type="range" min="0" max="1" step="0.1" value="0.3" />
-</label>
-<label>Max tokens
-<input id="optMaxTok" type="number" min="64" max="4096" value="1024" />
-</label>
-</div>
-</div>
-</section>
-</section>
-</main>
+      <!-- Placeholders -->
+      <section class="panel" data-panel="audio">
+        <div class="card">
+          <div class="card-head"><h2>Text → Sound</h2></div>
+          <p class="muted">Coming next: natural voices and audio prompts.</p>
+          <form id="audForm"><button class="btn" type="submit">Try</button></form>
+          <pre id="audOut" class="mono muted"></pre>
+        </div>
+      </section>
 
+      <section class="panel" data-panel="video">
+        <div class="card">
+          <div class="card-head"><h2>Text → Video</h2></div>
+          <p class="muted">Short clips for explainers & promos (to be wired).</p>
+          <form id="vidForm"><button class="btn" type="submit">Try</button></form>
+          <pre id="vidOut" class="mono muted"></pre>
+        </div>
+      </section>
+    </section>
+  </main>
 
-<footer class="site-footer">
-<div class="container">© 2025 Elwyn AI — One-page interface (Mission 1)</div>
-</footer>
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="wrap foot">
+      <div>© 2025 Elwyn AI — crafted for clarity & care</div>
+      <div class="links">
+        <a href="https://www.elwyn.org" target="_blank" rel="noopener">Elwyn.org</a>
+        <a href="mailto:info@elwyn.io">Contact</a>
+      </div>
+    </div>
+  </footer>
 
-
-<script src="/assets/app.js" defer></script>
+  <script src="/assets/app.js"></script>
 </body>
 </html>
