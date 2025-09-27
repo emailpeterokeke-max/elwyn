@@ -104,7 +104,86 @@
 
   <footer class="footer">© 2025 Elwyn AI</footer>
 
-  <!-- IMPORTANT: load external JS only; cache-bust to avoid stale script -->
-  <script src="/assets/app.js?cb=3"></script>
+  <script>
+    // === CONFIG ===
+    const VERSION = "inline-v1";
+    const WORKER_URL = "/api";
+    const DEFAULT_MODEL = "latest";
+    const $ = (id) => document.getElementById(id);
+    const currentModel = () => $("engineSelect")?.value || DEFAULT_MODEL;
+
+    // === Health (+visible version) ===
+    (async ()=>{
+      const st = $("apiStatus"), dbg = $("debug");
+      if (!st) return;
+      st.textContent = "checking… • " + VERSION;
+      try{
+        const r = await fetch(`${WORKER_URL}/v1/health?cb=${Date.now()}`, { cache:"no-store" });
+        const raw = await r.text(); let j; try{ j=JSON.parse(raw);}catch{}
+        if (j?.ok) { st.textContent = `online (${j.latest||"latest"}) • ${VERSION}`; st.classList.add("ok"); }
+        else { st.textContent = `error (${r.status}) • ${VERSION}`; st.classList.add("err"); }
+        if (dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
+      }catch(e){ st.textContent = `offline • ${VERSION}`; st.classList.add("err"); if($("debug")) $("debug").textContent = String(e); }
+    })();
+
+    // === Sidebar ===
+    (()=>{ const view=$("view"); const links=[...document.querySelectorAll(".side-link")];
+      function show(name){ view.querySelectorAll(".panel").forEach(p=>p.classList.remove("is-visible"));
+        view.querySelector(`[data-panel="\${name}"]`)?.classList.add("is-visible");
+        links.forEach(b=>b.classList.toggle("is-active", b.dataset.view===name));
+      }
+      links.forEach(b=>b.addEventListener("click", ()=>show(b.dataset.view)));
+    })();
+
+    // === Chat ===
+    (()=>{ const log=$("chatLog"), form=$("chatForm"), box=$("chatBox"), dbg=$("debug");
+      if(!log||!form||!box) return;
+      const hist = JSON.parse(localStorage.getItem("elwyn:chat")||"[]");
+      const add=(role,text)=>{ const d=document.createElement("div"); d.className="bubble "+(role==="user"?"user":"assistant"); d.textContent=text; log.appendChild(d); log.scrollTop=log.scrollHeight; };
+      const save=()=>localStorage.setItem("elwyn:chat", JSON.stringify(hist));
+      hist.forEach(m=>add(m.role,m.content));
+      $("clearChat")?.addEventListener("click",()=>{ localStorage.removeItem("elwyn:chat"); log.innerHTML=""; });
+      form.addEventListener("submit", async (e)=>{
+        e.preventDefault();
+        const text=(box.value||"").trim(); if(!text) return;
+        box.value=""; hist.push({role:"user",content:text}); add("user",text); save();
+        const thinking=document.createElement("div"); thinking.className="bubble assistant"; thinking.textContent="…thinking…";
+        log.appendChild(thinking); log.scrollTop=log.scrollHeight;
+        try{
+          const r = await fetch(`${WORKER_URL}/v1/chat`,{
+            method:"POST", headers:{ "content-type":"application/json" },
+            body: JSON.stringify({ model: currentModel(), messages: hist })
+          });
+          const raw=await r.text(); let j; try{ j=JSON.parse(raw);}catch{}
+          const extra = j?.modelUsed ? `\\n\\n— via \${j.modelUsed}` : "";
+          const reply = j?.ok ? (j.reply||"(no reply)")+extra : `Error (\${r.status}): \${j?.error||raw}`;
+          thinking.remove(); hist.push({role:"assistant",content:reply}); save(); add("assistant", reply);
+          if(dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
+        }catch(err){ thinking.remove(); add("assistant","Network error: "+(err?.message||err)); if(dbg) dbg.textContent = String(err); }
+      });
+    })();
+
+    // === Image ===
+    (()=>{ const form=$("imgForm"), input=$("imgPrompt"), out=$("imgOut"), dbg=$("debug");
+      if(!form||!input||!out) return;
+      form.addEventListener("submit", async (e)=>{
+        e.preventDefault();
+        const p=(input.value||"").trim(); if(!p) return;
+        out.innerHTML='<div class="muted">Generating…</div>';
+        try{
+          const r = await fetch(`${WORKER_URL}/v1/image`,{
+            method:"POST", headers:{ "content-type":"application/json" },
+            body: JSON.stringify({ prompt:p, size:"1024x1024" })
+          });
+          const raw=await r.text(); let j; try{ j=JSON.parse(raw);}catch{}
+          if (j?.ok && j.image_b64) {
+            const img=new Image(); img.src="data:image/png;base64,"+j.image_b64; img.alt="generated image"; img.style.width="100%";
+            out.innerHTML=""; out.appendChild(img);
+          } else { out.innerHTML = `<span class="muted">Error (\${r.status}): \${j?.error||raw}</span>`; }
+          if(dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
+        }catch(err){ out.innerHTML = `<span class="muted">Network error: \${(err?.message||err)}</span>`; if(dbg) dbg.textContent = String(err); }
+      });
+    })();
+  </script>
 </body>
 </html>
