@@ -1,17 +1,46 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Elwyn AI</title>
-  <meta name="theme-color" content="#7A012E" />
-  <link rel="stylesheet" href="/assets/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Elwyn AI</title>
+<meta name="theme-color" content="#7A012E" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d1015; --card:#121722; --muted:#9db0c7; --accent:#7A012E;
+    --chip:#2b2f3a; --ok:#6bd899; --err:#ff8a8a;
+    --bd:#1f2633;
+  }
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:#e7eef7;font-family:Inter,system-ui,sans-serif}
+  .topbar{background:linear-gradient(180deg,#8b1839,#5c0f24); padding:10px 16px; position:sticky; top:0; z-index:5}
+  .wrap{max-width:1100px; margin:0 auto; display:flex; align-items:center; gap:12px}
+  .brand{font-weight:700} .chip{background:var(--chip); padding:4px 10px; border-radius:999px; font-size:12px}
+  .chip.ok{background:#16331f; color:var(--ok)} .chip.err{background:#3a2020; color:var(--err)}
+  .engine{margin-left:auto; background:var(--card); color:#e7eef7; border:1px solid var(--bd); padding:6px 8px; border-radius:8px}
+  .layout{max-width:1100px; margin:18px auto; display:grid; grid-template-columns:260px 1fr; gap:16px}
+  .card{background:var(--card); border:1px solid var(--bd); border-radius:12px; padding:12px}
+  .side-title{font-weight:600; margin-bottom:6px}
+  .side-link{display:block; width:100%; text-align:left; background:#0f141d; border:1px solid var(--bd); color:#dbe7f5; padding:8px 10px; border-radius:10px; margin:6px 0; cursor:pointer}
+  .side-link.is-active{outline:2px solid #2b374a}
+  .muted{color:var(--muted)} .row{display:flex; gap:8px; align-items:center}
+  .btn{background:#1a2130; color:#dbe7f5; border:1px solid var(--bd); padding:8px 12px; border-radius:10px; cursor:pointer}
+  .btn.primary{background:#1f2a3e; border-color:#2b3b55}
+  textarea{width:100%; background:#0f141d; color:#e7eef7; border:1px solid var(--bd); border-radius:10px; padding:10px; resize:vertical}
+  .chat-log{display:flex; flex-direction:column; gap:8px; max-height:420px; overflow:auto; background:#0f141d; border:1px solid var(--bd); border-radius:10px; padding:10px}
+  .bubble{background:#0f141d; border:1px solid var(--bd); border-radius:10px; padding:10px}
+  .bubble.user{background:#101826} .bubble.assistant{background:#10141f}
+  .panel{display:none} .panel.is-visible{display:block}
+  .footer{max-width:1100px; margin:30px auto; color:#aab6c8}
+  .link{color:#c9d7ee}
+</style>
 </head>
 <body>
   <header class="topbar">
     <div class="wrap">
-      <div class="brand"><strong>Elwyn AI</strong></div>
-      <div class="chip success" id="apiStatus">checking…</div>
+      <div class="brand">Elwyn AI</div>
+      <div class="chip" id="apiStatus">checking…</div>
       <select id="engineSelect" class="engine">
         <option value="gpt-4o" selected>gpt-4o (default)</option>
         <option value="latest">Latest (auto)</option>
@@ -23,29 +52,27 @@
   </header>
 
   <main class="layout">
-    <aside class="side">
+    <aside>
       <div class="card">
         <div class="side-title">Tools</div>
         <button class="side-link is-active" data-view="chat">Chat</button>
-        <button class="side-link" data-view="image">Text → Image</button>
-        <button class="side-link" data-view="audio">Text → Sound (soon)</button>
-        <button class="side-link" data-view="video">Text → Video (soon)</button>
+        <button class="side-link" data-view="image">Text — Image</button>
+        <button class="side-link" data-view="audio">Text — Sound (soon)</button>
+        <button class="side-link" data-view="video">Text — Video (soon)</button>
       </div>
-      <div class="card small">
+      <div class="card">
         <div class="side-title">About</div>
         <p class="muted tiny">One page interface for global-scale AI.</p>
         <p class="muted tiny">API: <code>elwyn.emailpeterokeke.workers.dev</code></p>
       </div>
     </aside>
 
-    <section class="content" id="view">
+    <section id="view">
       <!-- Chat -->
       <section class="panel is-visible" data-panel="chat">
         <div class="card">
-          <div class="card-head">
-            <h2>Ask Elwyn AI</h2>
-            <p class="muted">Helpful, concise assistance. “Latest” falls back if unavailable.</p>
-          </div>
+          <h2>Ask Elwyn AI</h2>
+          <p class="muted">Helpful, concise assistance. “Latest” falls back if unavailable.</p>
           <div class="chat">
             <div id="chatLog" class="chat-log"></div>
             <form id="chatForm" class="chat-input">
@@ -62,12 +89,12 @@
       <!-- Image -->
       <section class="panel" data-panel="image">
         <div class="card">
-          <div class="card-head"><h2>Text → Image</h2></div>
+          <h2>Text → Image</h2>
           <form id="imgForm">
             <textarea id="imgPrompt" rows="3" placeholder="Describe the image…"></textarea>
             <div class="row"><button class="btn primary" type="submit">Generate</button></div>
           </form>
-          <div id="imgOut" class="mt-2"></div>
+          <div id="imgOut" class="muted" style="margin-top:10px"></div>
         </div>
       </section>
 
@@ -77,9 +104,105 @@
     </section>
   </main>
 
-  <footer class="footer"><div class="wrap foot">© 2025 Elwyn AI</div></footer>
+  <footer class="footer">© 2025 Elwyn AI</footer>
 
-  <!-- App JS -->
-  <script src="/assets/app.js" defer></script>
+  <script>
+    // === CONFIG ===
+    const WORKER_URL = "https://elwyn.emailpeterokeke.workers.dev";
+    const DEFAULT_MODEL = "gpt-4o";
+    const currentModel = () => document.getElementById("engineSelect")?.value || DEFAULT_MODEL;
+
+    // === Health ===
+    (async ()=>{
+      const st = document.getElementById("apiStatus");
+      try{
+        const r = await fetch(`${WORKER_URL}/v1/health`,{cache:"no-store"});
+        const j = await r.json().catch(()=>null);
+        if (j?.ok) { st.textContent = `online (${j.latest||"latest"})`; st.classList.add("ok"); }
+        else { st.textContent = "error"; st.classList.add("err"); }
+      }catch{ st.textContent = "offline"; st.classList.add("err"); }
+    })();
+
+    // === Sidebar ===
+    (()=>{
+      const view = document.getElementById("view");
+      const links = [...document.querySelectorAll(".side-link")];
+      function show(name){
+        view.querySelectorAll(".panel").forEach(p=>p.classList.remove("is-visible"));
+        view.querySelector(`[data-panel="${name}"]`)?.classList.add("is-visible");
+        links.forEach(b=>b.classList.toggle("is-active", b.dataset.view===name));
+      }
+      links.forEach(b=>b.addEventListener("click", ()=>show(b.dataset.view)));
+    })();
+
+    // === Chat ===
+    (()=>{
+      const log = document.getElementById("chatLog");
+      const form = document.getElementById("chatForm");
+      const box  = document.getElementById("chatBox");
+      if (!log || !form || !box) return;
+
+      const hist = JSON.parse(localStorage.getItem("elwyn:chat")||"[]");
+      const add = (role,text)=>{ const d=document.createElement("div"); d.className="bubble "+(role==="user"?"user":"assistant"); d.textContent=text; log.appendChild(d); log.scrollTop=log.scrollHeight; };
+      const save= ()=> localStorage.setItem("elwyn:chat", JSON.stringify(hist));
+      hist.forEach(m=>add(m.role,m.content));
+
+      document.getElementById("clearChat")?.addEventListener("click",()=>{ localStorage.removeItem("elwyn:chat"); log.innerHTML=""; });
+
+      form.addEventListener("submit", async (e)=>{
+        e.preventDefault();
+        const text=(box.value||"").trim(); if(!text) return;
+        box.value=""; hist.push({role:"user",content:text}); add("user",text); save();
+
+        const thinking=document.createElement("div"); thinking.className="bubble assistant"; thinking.textContent="…thinking…";
+        log.appendChild(thinking); log.scrollTop=log.scrollHeight;
+
+        try{
+          const r = await fetch(`${WORKER_URL}/v1/chat`,{
+            method:"POST",
+            headers:{ "content-type":"application/json" },
+            body: JSON.stringify({ model: currentModel(), messages: hist })
+          });
+          const j = await r.json().catch(()=>({}));
+          const extra = j.modelUsed ? `\n\n— via ${j.modelUsed}` : "";
+          const reply = (j.reply||"(no reply)")+extra;
+          thinking.remove(); hist.push({role:"assistant",content:reply}); save(); add("assistant", reply);
+        }catch(err){ thinking.remove(); add("assistant","Server error: "+(err?.message||err)); }
+      });
+    })();
+
+    // === Image ===
+    (()=>{
+      const form=document.getElementById("imgForm");
+      const input=document.getElementById("imgPrompt");
+      const out=document.getElementById("imgOut");
+      if(!form||!input||!out) return;
+
+      form.addEventListener("submit", async (e)=>{
+        e.preventDefault();
+        const p=(input.value||"").trim(); if(!p) return;
+        out.innerHTML='<span class="muted">Generating…</span>';
+        try{
+          const r = await fetch(`${WORKER_URL}/v1/image`,{
+            method:"POST",
+            headers:{ "content-type":"application/json" },
+            body: JSON.stringify({ prompt:p, size:"1024x1024" })
+          });
+          const j = await r.json().catch(()=>({}));
+          if (j?.ok && j.image_b64) {
+            const img = new Image();
+            img.src = "data:image/png;base64,"+j.image_b64; img.alt="generated image"; img.style.width="100%";
+            out.innerHTML=""; out.appendChild(img);
+          } else {
+            out.innerHTML = `<span class="muted">Error: ${j?.error||"failed"}</span>`;
+          }
+        }catch(err){ out.innerHTML = `<span class="muted">Server error: ${(err?.message||err)}</span>`; }
+      });
+    })();
+
+    // Placeholders
+    document.getElementById("audForm")?.addEventListener("submit",(e)=>{ e.preventDefault(); document.getElementById("audOut").textContent="Queued (API wiring next)…"; });
+    document.getElementById("vidForm")?.addEventListener("submit",(e)=>{ e.preventDefault(); document.getElementById("vidOut").textContent="Queued (API wiring next)…"; });
+  </script>
 </body>
 </html>
