@@ -9,97 +9,156 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    /* === Elwyn palette (original, higher contrast) === */
+    /* ------------- Design System ------------- */
     :root{
-      --burgundy:#7A1E2C; --burgundy-2:#8F2A3A; --rose:#B34A59;
-      --ink:#0f1317; --panel:#12181f; --muted:#a9b1bd; --text:#e9eef3; --line:#233041;
-      --success:#49d19a; --shadow:0 8px 24px rgba(0,0,0,.35);
+      /* Base tokens (overridden by themes) */
+      --bg:#0f1317; --panel:#12181f; --text:#e9eef3; --muted:#a9b1bd; --line:#233041;
+      --primary:#7A1E2C; --primary-2:#8F2A3A; --ok:#49d19a; --err:#ff8a8a;
+      --elev:0 8px 24px rgba(0,0,0,.35);
+      --radius:14px;
+      --focus:#8ec9ff;
+    }
+    /* Themes (10) — body[data-theme="name"] overrides */
+    body[data-theme="classic"]{
+      --bg:#0f1317; --panel:#12181f; --text:#e9eef3; --muted:#a9b1bd; --line:#233041; --primary:#7A1E2C; --primary-2:#8F2A3A;
+    }
+    body[data-theme="midnight"]{
+      --bg:#0b0f14; --panel:#111622; --text:#dfe8f5; --muted:#9fb0c7; --line:#1e2b41; --primary:#2f6be0; --primary-2:#3a7bff;
+    }
+    body[data-theme="forest"]{
+      --bg:#0e1411; --panel:#121a16; --text:#e8f4ec; --muted:#a7c3b1; --line:#1c3327; --primary:#1f8a5b; --primary-2:#26a06a;
+    }
+    body[data-theme="ocean"]{
+      --bg:#0c1318; --panel:#101a22; --text:#e8f7ff; --muted:#a7c6d6; --line:#1f3442; --primary:#0fa3c9; --primary-2:#18b5dd;
+    }
+    body[data-theme="solar"]{
+      --bg:#0f1114; --panel:#151922; --text:#fff6e6; --muted:#e0cfa6; --line:#2c2a20; --primary:#ffb020; --primary-2:#ffc241;
+    }
+    body[data-theme="orchid"]{
+      --bg:#130f14; --panel:#1b141c; --text:#f8ecff; --muted:#d0b7de; --line:#2e2331; --primary:#b15bd4; --primary-2:#c778e7;
+    }
+    body[data-theme="slate"]{
+      --bg:#0f1113; --panel:#15181c; --text:#e8edf3; --muted:#b1bcc9; --line:#232a33; --primary:#5c7cff; --primary-2:#7791ff;
+    }
+    body[data-theme="sand"]{
+      --bg:#0f100f; --panel:#171814; --text:#f4efe6; --muted:#d8cfbe; --line:#2e2a20; --primary:#d6a15b; --primary-2:#e2b16c;
+    }
+    body[data-theme="rose"]{
+      --bg:#111014; --panel:#18161c; --text:#ffeef3; --muted:#e3c1cd; --line:#2e2331; --primary:#d6537a; --primary-2:#e06c90;
+    }
+    body[data-theme="contrast"]{
+      --bg:#000; --panel:#0e0e0e; --text:#fff; --muted:#cfd6df; --line:#2b2b2b; --primary:#00d18f; --primary-2:#25e0a7;
     }
 
+    /* Reset & layout */
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
-      margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      color:var(--text);
-      background:radial-gradient(1200px 800px at -10% -10%, #1a212a 0%, #0e1216 60%) fixed;
+      margin:0; color:var(--text);
+      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:
+        radial-gradient(1200px 800px at -10% -10%, color-mix(in oklab, var(--panel) 40%, black) 0%, var(--bg) 60%) fixed;
     }
+    a{color:inherit}
+    button,select,textarea{font:inherit}
 
-    /* Top bar */
     .topbar{
-      background:linear-gradient(90deg,var(--burgundy) 0%,var(--burgundy-2) 100%);
-      border-bottom:1px solid rgba(255,255,255,.06);
+      background:linear-gradient(90deg,var(--primary) 0%,var(--primary-2) 100%);
+      border-bottom:1px solid color-mix(in oklab, #fff 6%, transparent);
       position:sticky; top:0; z-index:5;
     }
-    .wrap{max-width:1100px;margin:0 auto;padding:14px 18px;display:flex;align-items:center;gap:18px}
+    .wrap{max-width:1200px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
     .brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none}
-    .logo{width:34px;height:34px;border-radius:8px;background:#fff;color:var(--burgundy);display:grid;place-items:center;font-weight:800;box-shadow:var(--shadow)}
-    .brand-text strong{font-weight:800}.brand-text .sub{opacity:.9;font-weight:700}
-    .chip{padding:6px 10px;border-radius:999px;font-size:12px;background:rgba(255,255,255,.12);color:#fff}
-    .chip.ok{background:rgba(73,209,154,.18);color:#c9ffe9}
-    .chip.err{background:rgba(255,138,138,.18);color:#ffd1d1}
-    .engine{margin-left:auto;appearance:none;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;padding:6px 10px;border-radius:8px}
+    .logo{width:34px;height:34px;border-radius:8px;background:#fff;color:var(--primary);display:grid;place-items:center;font-weight:800;box-shadow:var(--elev)}
+    .chip{padding:6px 10px;border-radius:999px;font-size:12px;background:rgba(255,255,255,.12);color:#fff;white-space:nowrap}
+    .chip.ok{background:color-mix(in oklab, var(--ok) 25%, transparent);color:#c9ffe9}
+    .chip.err{background:color-mix(in oklab, var(--err) 30%, transparent);color:#ffd1d1}
+    .toolbar{margin-left:auto;display:flex;gap:8px;align-items:center}
+    .select, .engine{
+      appearance:none;border:1px solid rgba(255,255,255,.25);
+      background:rgba(255,255,255,.08);color:#fff;padding:6px 10px;border-radius:8px
+    }
 
-    /* Layout */
-    .layout{max-width:1100px;margin:24px auto;display:grid;grid-template-columns:260px 1fr;gap:18px;padding:0 18px}
-    .side{position:sticky;top:18px;align-self:start}
-    .side-group{background:rgba(18,24,31,.7);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
-    .side-title{font-weight:700;color:#fff;margin-bottom:8px}
-    .side-link{width:100%;text-align:left;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#0f151c;color:#e8edf3;margin-bottom:8px;cursor:pointer;transition:.15s}
-    .side-link.is-active,.side-link:hover{background:#17202a;border-color:#31455f}
+    .layout{max-width:1200px;margin:20px auto;display:grid;grid-template-columns:280px 1fr;gap:18px;padding:0 16px}
+    .side{position:sticky;top:16px;align-self:start}
+    .side-group{background:color-mix(in oklab, var(--panel) 85%, transparent);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--elev);margin-bottom:12px}
+    .side-title{font-weight:700;margin-bottom:8px}
+    .side-link{width:100%;text-align:left;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:color-mix(in oklab, var(--panel) 70%, black 30%);color:var(--text);margin-bottom:8px;cursor:pointer;transition:.15s}
+    .side-link.is-active,.side-link:hover{background:color-mix(in oklab, var(--panel) 55%, var(--primary) 20%);border-color:color-mix(in oklab, var(--line) 70%, var(--primary) 30%)}
 
-    /* Cards + content */
-    .content .card,.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:16px}
-    .card-head h2{margin:0 0 6px 0}.card-head .muted{margin:0;color:var(--muted)}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--elev);padding:16px}
     .muted{color:var(--muted)} .tiny{font-size:12px}
 
-    /* Chat */
-    .chat{display:grid;gap:12px}
-    .chat-log{max-height:420px;overflow:auto;border:1px dashed #243246;border-radius:12px;padding:12px;background:#0c1116}
-    .bubble{padding:10px 12px;border-radius:12px;margin:8px 0;line-height:1.45;white-space:pre-wrap}
-    .bubble.user{background:#151d26;border:1px solid #243246}
-    .bubble.assistant{background:rgba(122,30,44,.12);border:1px solid #3a2126}
-    .chat-input textarea{width:100%;resize:vertical;min-height:72px;border-radius:12px;border:1px solid #223045;padding:10px 12px;background:#0c1116;color:#e9eef3}
+    .grid{display:grid;gap:12px}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{appearance:none;border:1px solid color-mix(in oklab, var(--line) 80%, #fff 0%);background:color-mix(in oklab, var(--panel) 85%, #000 15%);color:var(--text);padding:10px 14px;border-radius:10px;cursor:pointer;transition:.15s}
+    .btn:hover{background:color-mix(in oklab, var(--panel) 70%, var(--primary) 10%)} .btn.primary{background:var(--primary);border-color:var(--primary-2)} .btn.primary:hover{background:var(--primary-2)}
+    .input, textarea, select{width:100%;background:color-mix(in oklab, var(--panel) 85%, #000 15%);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px}
+    textarea{resize:vertical}
 
-    .row{display:flex;gap:10px;margin-top:10px}
-    .btn{appearance:none;border:1px solid #2a3a50;background:#0f151c;color:#e9eef3;padding:10px 14px;border-radius:10px;cursor:pointer;transition:.15s}
-    .btn:hover{background:#17202a}
-    .btn.primary{background:var(--burgundy);border-color:#8c2a3a}
-    .btn.primary:hover{background:#8F2A3A}
+    .chat-log{max-height:420px;overflow:auto;border:1px dashed color-mix(in oklab, var(--line) 90%, #000 10%);border-radius:12px;padding:12px;background:color-mix(in oklab, var(--panel) 75%, #000 25%)}
+    .bubble{padding:10px 12px;border-radius:12px;margin:8px 0;line-height:1.5;white-space:pre-wrap;animation:fade .12s ease}
+    .bubble.user{background:color-mix(in oklab, var(--panel) 70%, #000 30%);border:1px solid var(--line)}
+    .bubble.assistant{background:color-mix(in oklab, var(--primary) 18%, var(--panel) 82%);border:1px solid color-mix(in oklab, var(--primary) 35%, var(--line) 65%)}
+    @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 
-    /* Image */
-    .img-out{margin-top:12px}.img-out img{border-radius:12px;border:1px solid #26364b;display:block}
-
-    /* Footer */
-    .footer{margin-top:28px;border-top:1px solid #1f2935;background:#0b0f13}
-    .foot{padding:18px;max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px;color:#a6afbb}
-    .foot .links{margin-left:auto;display:flex;gap:14px}
-    .foot a{color:#cfd8e3;text-decoration:none}.foot a:hover{color:#fff}
+    .table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+    .table thead th{background:color-mix(in oklab, var(--panel) 70%, var(--primary) 10%);text-align:left;padding:10px;border-bottom:1px solid var(--line);font-weight:700}
+    .table td{padding:10px;border-bottom:1px solid var(--line)}
+    .table tr:last-child td{border-bottom:none}
 
     .panel{display:none}.panel.is-visible{display:block}
-    code{background:#0c1116;padding:2px 6px;border-radius:6px;border:1px solid #213048}
-    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
-    .debug{margin-top:10px;font-size:12px;white-space:pre-wrap;color:#aab6c8}
+    .debug{margin-top:10px;font-size:12px;white-space:pre-wrap;color:var(--muted)}
+    .footer{margin:30px 0;color:var(--muted);text-align:center}
+
+    /* Responsive */
+    @media (max-width: 1000px){ .layout{grid-template-columns: 1fr} .side{position:static} }
+    @media (max-width: 560px){
+      .wrap{gap:8px}
+      .toolbar{gap:6px}
+      .engine,.select{padding:6px 8px}
+      .chat-log{max-height:360px}
+    }
+
+    /* Focus */
+    .side-link:focus,.btn:focus,.input:focus,textarea:focus,select:focus{outline:2px solid var(--focus);outline-offset:2px}
   </style>
 </head>
 
-<body>
+<body data-theme="classic">
   <!-- Top bar -->
   <header class="topbar">
     <div class="wrap">
-      <a class="brand" href="#">
+      <a class="brand" href="#" aria-label="Elwyn Home">
         <div class="logo">E</div>
-        <div class="brand-text">
-          <strong>Elwyn AI</strong>
-        </div>
+        <div><strong>Elwyn AI</strong></div>
       </a>
       <div class="chip" id="apiStatus">checking…</div>
-      <select id="engineSelect" class="engine" aria-label="Model">
-        <option value="latest" selected>Latest (auto)</option>
-        <option value="gpt-5-thinking">gpt-5-thinking</option>
-        <option value="gpt-5">gpt-5</option>
-        <option value="gpt-4o">gpt-4o</option>
-        <option value="gpt-4o-mini">gpt-4o-mini</option>
-      </select>
+
+      <div class="toolbar">
+        <label class="tiny" for="themeSelect" style="color:#fff;opacity:.9">Theme</label>
+        <select id="themeSelect" class="select" aria-label="Choose theme">
+          <option value="classic" selected>Classic (Burgundy)</option>
+          <option value="midnight">Midnight</option>
+          <option value="forest">Forest</option>
+          <option value="ocean">Ocean</option>
+          <option value="solar">Solar</option>
+          <option value="orchid">Orchid</option>
+          <option value="slate">Slate</option>
+          <option value="sand">Sand</option>
+          <option value="rose">Rose</option>
+          <option value="contrast">High Contrast</option>
+        </select>
+
+        <label class="tiny" for="engineSelect" style="color:#fff;opacity:.9">Model</label>
+        <select id="engineSelect" class="engine" aria-label="Model">
+          <option value="latest" selected>Latest (auto)</option>
+          <option value="model-5-thinking">model-5-thinking</option>
+          <option value="model-5">model-5</option>
+          <option value="model-4o">model-4o</option>
+          <option value="model-4o-mini">model-4o-mini</option>
+        </select>
+      </div>
     </div>
   </header>
 
@@ -110,9 +169,8 @@
       <div class="side-group">
         <div class="side-title">Tools</div>
         <button class="side-link is-active" data-view="chat">Chat</button>
-        <button class="side-link" data-view="image">Text — Image</button>
-        <button class="side-link" data-view="audio">Text — Sound (soon)</button>
-        <button class="side-link" data-view="video">Text — Video (soon)</button>
+        <button class="side-link" data-view="image">Text → Image</button>
+        <button class="side-link" data-view="mission">Mission</button>
       </div>
       <div class="side-group small">
         <div class="side-title">About</div>
@@ -122,21 +180,18 @@
     </aside>
 
     <!-- Views -->
-    <section id="view" class="content">
+    <section id="view" class="grid">
       <!-- Chat -->
       <section class="panel is-visible" data-panel="chat">
         <div class="card">
-          <div class="card-head">
-            <h2>Ask Elwyn AI</h2>
-            <p class="muted">Helpful, concise assistance. “Latest” falls back gracefully.</p>
-          </div>
-          <div class="chat">
+          <h2>Ask Elwyn AI</h2>
+          <p class="muted">Helpful, concise assistance. “Latest” falls back gracefully.</p>
+          <div class="grid">
             <div id="chatLog" class="chat-log" aria-live="polite"></div>
-            <form id="chatForm" class="chat-input">
-              <label class="tiny muted" for="chatBox">Message</label>
+            <form id="chatForm" class="grid">
               <textarea id="chatBox" rows="4" placeholder="Ask anything…" autocomplete="off"></textarea>
               <div class="row">
-                <button class="btn primary" type="submit" id="sendBtn">Send</button>
+                <button class="btn primary" type="submit">Send</button>
                 <button class="btn" type="button" id="clearChat">Clear</button>
               </div>
             </form>
@@ -148,64 +203,186 @@
       <!-- Image -->
       <section class="panel" data-panel="image">
         <div class="card">
-          <div class="card-head">
-            <h2>Text → Image</h2>
-            <p class="muted">Generates images via the Worker’s `/v1/image` endpoint.</p>
-          </div>
-          <form id="imgForm" class="form">
-            <label class="tiny muted" for="imgPrompt">Prompt</label>
+          <h2>Text → Image</h2>
+          <form id="imgForm" class="grid">
             <textarea id="imgPrompt" rows="3" placeholder="Describe the image…"></textarea>
             <div class="row"><button class="btn primary" type="submit">Generate</button></div>
           </form>
-          <div id="imgOut" class="img-out"></div>
+          <div id="imgOut" class="grid"></div>
         </div>
       </section>
 
-      <!-- Placeholders -->
-      <section class="panel" data-panel="audio">
+      <!-- Mission -->
+      <section class="panel" data-panel="mission">
         <div class="card">
-          <h2>Text → Sound</h2>
-          <form id="audForm"><button class="btn" type="submit">Try (soon)</button></form>
-          <pre id="audOut" class="muted"></pre>
-        </div>
-      </section>
+          <h2>Mission — Non-Profit Behavioral Health (AI-assisted, human-in-the-loop)</h2>
+          <p class="muted">
+            A hybrid care model where AI handles routine monitoring, analysis, and immediate support,
+            while licensed clinicians focus on complex therapeutic work, crisis intervention, and treatment planning—
+            expanding access without losing human quality.
+          </p>
 
-      <section class="panel" data-panel="video">
-        <div class="card">
-          <h2>Text → Video</h2>
-          <form id="vidForm"><button class="btn" type="submit">Try (soon)</button></form>
-          <pre id="vidOut" class="muted"></pre>
+          <h3 style="margin-top:16px">I. Clinical & Direct Service Features</h3>
+          <div class="row" style="justify-content:flex-end">
+            <button class="btn tiny" data-export="#tbl-clinical">Export CSV</button>
+          </div>
+          <div class="table-wrap">
+            <table class="table" id="tbl-clinical">
+              <thead><tr><th>Feature</th><th>AI Mechanism</th><th>Non-Profit Value</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>24/7 Conversational AI Support</td>
+                  <td>NLP chatbots/virtual assistants trained in therapeutic modalities (CBT, DBT).</td>
+                  <td>Instant, low-barrier support outside business hours; maximizes accessibility.</td>
+                </tr>
+                <tr>
+                  <td>Personalized Interventions</td>
+                  <td>ML models analyze mood tracking, text/voice signals, progress trends.</td>
+                  <td>Delivers tailored exercises and resources aligned to real-time state.</td>
+                </tr>
+                <tr>
+                  <td>Early Crisis Detection & Escalation</td>
+                  <td>Sentiment analysis & vocal/text biomarkers for high-risk language shifts.</td>
+                  <td>Flags SI/high distress and triggers hotline, clinician connect, or emergency workflow.</td>
+                </tr>
+                <tr>
+                  <td>Remote Progress Monitoring</td>
+                  <td>Wearables/Health APIs for sleep, HRV, activity + user mood check-ins.</td>
+                  <td>Enables measurement-informed care; tracks relapse indicators objectively.</td>
+                </tr>
+                <tr>
+                  <td>Automated Clinical Documentation</td>
+                  <td>Consent-based ambient transcription; structured note/treatment summaries.</td>
+                  <td>Frees clinician time for patient care; improves documentation quality.</td>
+                </tr>
+                <tr>
+                  <td>Diagnosis & Treatment Support</td>
+                  <td>Predictive analytics on history + assessments; evidence pathway suggestions.</td>
+                  <td>Assists humans with faster, more accurate decisions; clinician retains final say.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 style="margin-top:18px">II. Operational & Efficiency Features</h3>
+          <div class="row" style="justify-content:flex-end">
+            <button class="btn tiny" data-export="#tbl-ops">Export CSV</button>
+          </div>
+          <div class="table-wrap">
+            <table class="table" id="tbl-ops">
+              <thead><tr><th>Feature</th><th>AI Mechanism</th><th>Non-Profit Value</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>Workflow Automation</td>
+                  <td>RPA for scheduling, reminders, follow-ups.</td>
+                  <td>Reduces admin burden/costs; protects staff from burnout.</td>
+                </tr>
+                <tr>
+                  <td>Resource Optimization</td>
+                  <td>Predictive modeling of demand, staffing, high-risk periods.</td>
+                  <td>Directs scarce resources to greatest need; prevents service gaps.</td>
+                </tr>
+                <tr>
+                  <td>Grant Writing & Reporting</td>
+                  <td>Generative models synthesize outcomes and draft proposals.</td>
+                  <td>Improves fundraising efficiency with low overhead.</td>
+                </tr>
+                <tr>
+                  <td>Custom Reporting Dashboards</td>
+                  <td>Automated data viz for outcomes, equity, and finance KPIs.</td>
+                  <td>Demonstrates impact to board, donors, and regulators.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 style="margin-top:18px">III. Non-Profit & Ethical Mandates</h3>
+          <div class="row" style="justify-content:flex-end">
+            <button class="btn tiny" data-export="#tbl-ethics">Export CSV</button>
+          </div>
+          <div class="table-wrap">
+            <table class="table" id="tbl-ethics">
+              <thead><tr><th>Feature</th><th>Description & Rationale</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td>HIPAA/GDPR-Compliant Security</td>
+                  <td>End-to-end encryption, anonymization, strong access controls for sensitive mental-health data.</td>
+                </tr>
+                <tr>
+                  <td>Equity & Bias Mitigation</td>
+                  <td>Diverse training data; regular algorithmic audits; fairness metrics across demographics.</td>
+                </tr>
+                <tr>
+                  <td>Cost-Sensitive Scalability</td>
+                  <td>Low variable cost per user to reach uninsured/underinsured populations at scale.</td>
+                </tr>
+                <tr>
+                  <td>Transparency & Human Oversight</td>
+                  <td>Human-in-the-loop; clear disclosures that users interact with AI; clinicians make final decisions.</td>
+                </tr>
+                <tr>
+                  <td>Ethical Data Ownership</td>
+                  <td>User-owned data with granular consent and revocation; clear retention/deletion policies.</td>
+                </tr>
+                <tr>
+                  <td>Intake Triage Bot</td>
+                  <td>Collects basics, screens for risk (SI/HI), routes to appropriate clinician.</td>
+                </tr>
+                <tr>
+                  <td>Safety Classifier</td>
+                  <td>Real-time risk flags in chat/calls with automated escalation playbooks.</td>
+                </tr>
+                <tr>
+                  <td>Clinician Copilot</td>
+                  <td>Draft notes, visit summaries, ICD-10/SNOMED suggestions, and after-visit plans.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 style="margin-top:18px">Key Differentiator</h3>
+          <p class="muted">
+            A hybrid human-AI care model: models handle monitoring, analysis, and immediate support; human clinicians deliver
+            deep therapeutic relationships, crisis work, and individualized planning. This maximizes reach and quality, with
+            AI-assisted care always keeping a human in the loop.
+          </p>
         </div>
       </section>
     </section>
   </main>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="foot">
-      <div>© 2025 Elwyn AI</div>
-      <div class="links"></div>
-    </div>
-  </footer>
+  <footer class="footer">© 2025 Elwyn AI</footer>
 
-  <!-- Inline logic (uses /api proxy) -->
   <script>
-    const VERSION = "inline-v2";
+    /* ---------- App Logic (responsive, themeable, /api wired) ---------- */
+    const VERSION = "ui-v3";
     const WORKER_URL = "/api";
     const DEFAULT_MODEL = "latest";
-    const $ = (id) => document.getElementById(id);
-    const currentModel = () => $("engineSelect")?.value || DEFAULT_MODEL;
+    const $ = (sel) => document.querySelector(sel);
+    const $$ = (sel) => [...document.querySelectorAll(sel)];
+    const currentModel = () => $("#engineSelect")?.value || DEFAULT_MODEL;
+
+    // Theme switcher (10 themes)
+    const themeSelect = $("#themeSelect");
+    const savedTheme = localStorage.getItem("elwyn:theme");
+    if (savedTheme) document.body.setAttribute("data-theme", savedTheme);
+    if (savedTheme && themeSelect) themeSelect.value = savedTheme;
+    themeSelect?.addEventListener("change", () => {
+      const t = themeSelect.value;
+      document.body.setAttribute("data-theme", t);
+      localStorage.setItem("elwyn:theme", t);
+    });
 
     // Status chip helper
     function setStatus(text, cls){
-      const st = $("apiStatus");
+      const st = $("#apiStatus");
       if (!st) return;
       st.textContent = `${text} • ${VERSION}`;
       st.classList.remove("ok","err");
       if (cls) st.classList.add(cls);
     }
 
-    // Health
+    // Health (on load)
     (async ()=>{
       setStatus("checking…");
       try{
@@ -213,37 +390,36 @@
         const raw = await r.text(); let j; try{ j=JSON.parse(raw);}catch{}
         if (j?.ok) setStatus(`online (${j.latest||"latest"})`, "ok");
         else setStatus(`error (${r.status})`, "err");
-        const dbg = $("debug"); if (dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
+        const dbg = $("#debug"); if (dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
       } catch(e){
         setStatus("offline", "err");
-        const dbg = $("debug"); if (dbg) dbg.textContent = String(e);
+        const dbg = $("#debug"); if (dbg) dbg.textContent = String(e);
       }
     })();
 
-    // Sidebar switching (FIXED selector)
-    (() => {
-      const view = $("view");
-      const links = [...document.querySelectorAll(".side-link")];
-      if (!view || !links.length) return;
+    // Sidebar switching
+    (()=>{
+      const view = $("#view");
+      const links = $$(".side-link");
       function show(name){
         view.querySelectorAll(".panel").forEach(p=>p.classList.remove("is-visible"));
         view.querySelector('[data-panel="'+name+'"]')?.classList.add("is-visible");
-        links.forEach(b=>b.classList.toggle("is-active", b.dataset.view === name));
+        links.forEach(b=>b.classList.toggle("is-active", b.dataset.view===name));
+        window.scrollTo({top:0,behavior:"smooth"});
       }
-      links.forEach(b=>b.addEventListener("click", () => show(b.dataset.view)));
+      links.forEach(b=>b.addEventListener("click", ()=>show(b.dataset.view)));
     })();
 
     // Chat
-    (() => {
-      const log = $("chatLog"), form = $("chatForm"), box = $("chatBox"), dbg = $("debug");
-      if (!log || !form || !box) return;
+    (()=>{
+      const log=$("#chatLog"), form=$("#chatForm"), box=$("#chatBox"), dbg=$("#debug");
+      if(!log||!form||!box) return;
 
-      const hist = JSON.parse(localStorage.getItem("elwyn:chat") || "[]");
-      const add  = (role,text)=>{ const d=document.createElement("div"); d.className="bubble "+(role==="user"?"user":"assistant"); d.textContent=text; log.appendChild(d); log.scrollTop=log.scrollHeight; };
-      const save = ()=> localStorage.setItem("elwyn:chat", JSON.stringify(hist));
+      const hist = JSON.parse(localStorage.getItem("elwyn:chat")||"[]");
+      const add = (role,text)=>{ const d=document.createElement("div"); d.className="bubble "+(role==="user"?"user":"assistant"); d.textContent=text; log.appendChild(d); log.scrollTop=log.scrollHeight; };
+      const save=()=> localStorage.setItem("elwyn:chat", JSON.stringify(hist));
       hist.forEach(m=>add(m.role,m.content));
-
-      $("clearChat")?.addEventListener("click",()=>{ localStorage.removeItem("elwyn:chat"); log.innerHTML=""; });
+      $("#clearChat")?.addEventListener("click", ()=>{ localStorage.removeItem("elwyn:chat"); log.innerHTML=""; });
 
       form.addEventListener("submit", async (e)=>{
         e.preventDefault();
@@ -261,19 +437,19 @@
           const raw = await r.text(); let j; try{ j=JSON.parse(raw);}catch{}
           const extra = j?.modelUsed ? `\n\n— via ${j.modelUsed}` : "";
           const reply = j?.ok ? (j.reply||"(no reply)")+extra : `Error (${r.status}): ${j?.error || raw}`;
-          thinking.remove(); hist.push({role:"assistant",content:reply}); save(); add("assistant", reply);
-          if (dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
+          thinking.remove(); hist.push({role:"assistant",content:reply}); save(); add("assistant",reply);
+          if(dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
         }catch(err){
           thinking.remove(); add("assistant","Network error: "+(err?.message||err));
-          if (dbg) dbg.textContent = String(err);
+          if(dbg) dbg.textContent = String(err);
         }
       });
     })();
 
     // Text → Image
-    (() => {
-      const form = $("imgForm"), input = $("imgPrompt"), out = $("imgOut"), dbg = $("debug");
-      if (!form || !input || !out) return;
+    (()=>{
+      const form=$("#imgForm"), input=$("#imgPrompt"), out=$("#imgOut"), dbg=$("#debug");
+      if(!form||!input||!out) return;
 
       form.addEventListener("submit", async (e)=>{
         e.preventDefault();
@@ -286,24 +462,35 @@
           });
           const raw = await r.text(); let j; try{ j=JSON.parse(raw);}catch{}
           if (j?.ok && j.image_b64) {
-            const img = new Image();
-            img.src = "data:image/png;base64," + j.image_b64;
-            img.alt = "generated image"; img.style.width = "100%";
-            out.innerHTML = ""; out.appendChild(img);
-          } else {
-            out.innerHTML = `<span class="muted">Error (${r.status}): ${j?.error || raw}</span>`;
-          }
-          if (dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
+            const img=new Image(); img.src="data:image/png;base64,"+j.image_b64; img.alt="generated image"; img.style.width="100%";
+            out.innerHTML=""; out.appendChild(img);
+          } else { out.innerHTML = `<span class="muted">Error (${r.status}): ${j?.error||raw}</span>`; }
+          if(dbg) dbg.textContent = j ? JSON.stringify(j,null,2) : raw;
         }catch(err){
           out.innerHTML = `<span class="muted">Network error: ${(err?.message||err)}</span>`;
-          if (dbg) dbg.textContent = String(err);
+          if(dbg) dbg.textContent = String(err);
         }
       });
     })();
 
-    // Placeholders
-    $("audForm")?.addEventListener("submit",(e)=>{ e.preventDefault(); $("audOut").textContent="Queued (API wiring next)…"; });
-    $("vidForm")?.addEventListener("submit",(e)=>{ e.preventDefault(); $("vidOut").textContent="Queued (API wiring next)…"; });
+    // CSV Export (for tables in Mission)
+    $$(".btn.tiny[data-export]").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const table = document.querySelector(btn.getAttribute("data-export"));
+        if(!table) return;
+        let csv = "";
+        table.querySelectorAll("tr").forEach(tr=>{
+          const cells = [...tr.children].map(td => `"${td.textContent.replace(/"/g,'""')}"`);
+          csv += cells.join(",") + "\n";
+        });
+        const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = (table.id || "table") + ".csv";
+        a.click();
+        URL.revokeObjectURL(a.href);
+      });
+    });
   </script>
 </body>
 </html>
