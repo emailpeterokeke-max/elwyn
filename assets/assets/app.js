@@ -1,7 +1,7 @@
-// Elwyn AI — App wiring (chat + image). Uses your custom API domain.
+// Elwyn AI — App wiring (chat + image) via Vercel proxy to Worker.
 
 // ==== CONFIG ====
-const WORKER_URL = "https://api.elwyn.io"; // <- first-party API domain
+const WORKER_URL = "https://elwyn.io/api"; // proxied path
 function currentModel() {
   const sel = document.getElementById("engineSelect");
   return sel?.value || "latest";
@@ -20,7 +20,7 @@ function currentModel() {
   }
 })();
 
-// ==== Simple view switcher (sidebar) ====
+// ==== View switcher ====
 (() => {
   const view = document.getElementById("view");
   const links = [...document.querySelectorAll(".side-link")];
@@ -61,6 +61,7 @@ function currentModel() {
     const text = (chatBox.value || "").trim(); if (!text) return;
     chatBox.value = "";
     hist.push({ role: "user", content: text }); add("user", text); save();
+
     const thinking = document.createElement("div");
     thinking.className = "bubble assistant"; thinking.textContent = "…thinking…";
     chatLog.appendChild(thinking); chatLog.scrollTop = chatLog.scrollHeight;
@@ -74,6 +75,7 @@ function currentModel() {
       const j = await r.json().catch(() => ({}));
       const extra = j.modelUsed ? `\n\n— via ${j.modelUsed}${j.note ? " • " + j.note : ""}` : "";
       const reply = (j.reply || "(no reply)") + extra;
+
       thinking.remove();
       hist.push({ role: "assistant", content: reply }); save();
       add("assistant", reply);
@@ -118,7 +120,7 @@ function currentModel() {
   });
 })();
 
-// ==== Placeholders for upcoming tools ====
+// ==== Placeholders ====
 document.getElementById("audForm")?.addEventListener("submit", (e) => {
   e.preventDefault();
   document.getElementById("audOut").textContent = "Queued (API wiring next)…";
