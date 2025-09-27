@@ -1,16 +1,17 @@
 (() => {
-  // 1) Point the app to YOUR Worker URL (change this to your real one)
-  const WORKER_URL = "https://elwyn.<your-handle>.workers.dev";
+  // Your Cloudflare Worker endpoint
+  const WORKER_URL = "https://elwyn.emailpeterokeke.workers.dev";
 
-  // If you don't have an engine selector yet, this keeps it simple
-  function currentModel() { 
+  // Simple engine switch support (optional dropdown with id="engineSelect")
+  function currentModel() {
     const sel = document.getElementById("engineSelect");
     return sel?.value || "latest";
   }
 
-  // ---------- Health ping ----------
+  // ---- Health badge ----
   (async () => {
     const st = document.getElementById("apiStatus");
+    if (!st) return;
     try {
       const r = await fetch(`${WORKER_URL}/v1/health`, { cache: "no-store" });
       const j = await r.json().catch(() => null);
@@ -18,13 +19,14 @@
     } catch { st.textContent = "offline"; }
   })();
 
-  // ---------- Chat ----------
-  const chatLog = document.getElementById("chatLog");
+  // ---- Chat ----
+  const chatLog  = document.getElementById("chatLog");
   const chatForm = document.getElementById("chatForm");
   const chatBox  = document.getElementById("chatBox");
   const hist = JSON.parse(localStorage.getItem("elwyn:chat") || "[]");
 
   function addBubble(role, text){
+    if (!chatLog) return;
     const d = document.createElement("div");
     d.className = "bubble " + (role === "user" ? "user" : "assistant");
     d.textContent = text;
@@ -36,40 +38,40 @@
 
   chatForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const text = (chatBox.value || "").trim(); if (!text) return;
+    const text = (chatBox?.value || "").trim(); if (!text) return;
     chatBox.value = "";
-    hist.push({ role: "user", content: text }); addBubble("user", text); save();
+    hist.push({ role:"user", content:text }); addBubble("user", text); save();
     addBubble("assistant", "…thinking…");
 
     try {
       const r = await fetch(`${WORKER_URL}/v1/chat`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
+        method:"POST",
+        headers:{ "content-type":"application/json" },
         body: JSON.stringify({ model: currentModel(), messages: hist })
       });
       const j = await r.json().catch(() => ({}));
       const reply = (j.reply || "(no reply)") + (j.modelUsed ? `\n\n— via ${j.modelUsed}${j.note ? " • " + j.note : ""}` : "");
-      hist.push({ role: "assistant", content: reply }); save();
+      hist.push({ role:"assistant", content: reply }); save();
       addBubble("assistant", reply);
     } catch (err) {
       addBubble("assistant", "Server error: " + (err?.message || err));
     }
   });
 
-  // ---------- Text → Image ----------
+  // ---- Text → Image ----
   const imgForm   = document.getElementById("imgForm");
   const imgPrompt = document.getElementById("imgPrompt");
   const imgOut    = document.getElementById("imgOut");
 
   imgForm?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const p = (imgPrompt.value || "").trim(); if (!p) return;
+    const p = (imgPrompt?.value || "").trim(); if (!p) return;
     imgOut.innerHTML = `<div class="note">Generating…</div>`;
     try {
       const r = await fetch(`${WORKER_URL}/v1/image`, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ prompt: p, size: "1024x1024" })
+        method:"POST",
+        headers:{ "content-type":"application/json" },
+        body: JSON.stringify({ prompt: p, size:"1024x1024" })
       });
       const j = await r.json();
       if (j.ok && j.image_b64) {
@@ -86,11 +88,7 @@
     }
   });
 
-  // ---------- Placeholders ----------
-  document.getElementById("vidForm")?.addEventListener("submit",(e)=>{ 
-    e.preventDefault(); document.getElementById("vidOut").textContent = "Queued (API wiring next)…"; 
-  });
-  document.getElementById("audForm")?.addEventListener("submit",(e)=>{ 
-    e.preventDefault(); document.getElementById("audOut").textContent = "Queued (API wiring next)…"; 
-  });
+  // ---- Placeholders (wire later) ----
+  document.getElementById("vidForm")?.addEventListener("submit",(e)=>{ e.preventDefault(); document.getElementById("vidOut").textContent="Queued (API wiring next)…"; });
+  document.getElementById("audForm")?.addEventListener("submit",(e)=>{ e.preventDefault(); document.getElementById("audOut").textContent="Queued (API wiring next)…"; });
 })();
