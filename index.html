@@ -502,9 +502,8 @@
             body: JSON.stringify({ model: currentModel(), messages: hist })
           });
           const j = await r.json().catch(()=>({}));
-          const extra = j.modelUsed ? `\n\n— via ${j.modelUsed}` : "";
-          const reply = (j.reply||"(no reply)")+extra;
-          thinking.remove(); hist.push({role:"assistant",content:reply}); save(); add("assistant", reply);
+const reply = j.reply || "(no reply)";
+thinking.remove(); hist.push({role:"assistant",content:reply}); save(); add("assistant", reply);
         }catch(err){
           thinking.remove(); add("assistant","Server error: "+(err?.message||err));
         }
