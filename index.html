@@ -62,7 +62,7 @@
 </head>
 
 <body data-theme="classic">
-  <!-- Top bar (no status chip) -->
+  <!-- Top bar -->
   <header class="topbar">
     <div class="wrap">
       <a class="brand" href="#" aria-label="Elwyn Home">
@@ -73,11 +73,20 @@
   </header>
 
   <main class="layout">
-    <!-- Sidebar / Tools -->
+    <!-- LEFT: Nav links first -->
     <aside class="side">
       <div class="side-group">
-        <div class="side-title">Tools</div>
+        <div class="side-title">Navigate</div>
+        <button class="side-link is-active" data-view="chat">Chat</button>
+        <button class="side-link" data-view="image">Text → Image</button>
+        <button class="side-link" data-view="video">Text → Video (soon)</button>
+        <button class="side-link" data-view="audio">Text → Audio (soon)</button>
+        <button class="side-link" data-view="mission">Mission</button>
+      </div>
 
+      <!-- Tools moved BELOW the nav -->
+      <div class="side-group">
+        <div class="side-title">Tools</div>
         <label class="muted tiny" for="themeSelect">Theme</label>
         <select id="themeSelect" class="select" aria-label="Choose theme">
           <option value="classic" selected>Classic (Burgundy)</option>
@@ -100,18 +109,10 @@
           <option value="model-4o">model-4o</option>
           <option value="model-4o-mini">model-4o-mini</option>
         </select>
-
-        <hr style="border:none;border-top:1px solid var(--line);margin:12px 0">
-
-        <button class="side-link is-active" data-view="chat">Chat</button>
-        <button class="side-link" data-view="image">Text → Image</button>
-        <button class="side-link" data-view="video">Text → Video (soon)</button>
-        <button class="side-link" data-view="audio">Text → Audio (soon)</button>
-        <button class="side-link" data-view="mission">Mission</button>
       </div>
     </aside>
 
-    <!-- Views -->
+    <!-- RIGHT: Views -->
     <section id="view" class="grid">
 
       <!-- Chat -->
@@ -122,10 +123,14 @@
           <div class="grid">
             <div id="chatLog" class="chat-log" aria-live="polite"></div>
             <form id="chatForm" class="grid">
-              <textarea id="chatBox" rows="4" placeholder="Ask anything… (e.g., “weather in Lagos”, “what’s the time in London?”, “latest on electric vehicles”)"></textarea>
+              <label class="muted" for="chatBox" style="display:flex;align-items:center;gap:6px">
+                <span style="font-weight:700">Ask Anything</span> <span aria-hidden="true">→</span>
+              </label>
+              <textarea id="chatBox" rows="4" placeholder='Try: "weather in Lagos", "what’s the time in London?", "latest on electric vehicles"'></textarea>
               <div class="row">
                 <button class="btn primary" type="submit">Send</button>
                 <button class="btn" type="button" id="clearChat">Clear</button>
+                <button class="btn" type="button" id="useMyLocation" title="Use device location for time & weather">Use my location</button>
               </div>
             </form>
           </div>
@@ -373,6 +378,23 @@
       sel?.addEventListener("change", ()=>{ const t=sel.value; document.body.setAttribute("data-theme", t); localStorage.setItem("elwyn:theme", t); });
     })();
 
+    // Try to cache device location for weather/time accuracy
+    const geoKey = "elwyn:geo";
+    async function updateGeoFromDevice(){
+      if(!("geolocation" in navigator)) return null;
+      return new Promise((resolve)=> {
+        navigator.geolocation.getCurrentPosition(
+          (pos)=>{ 
+            const g={ lat:pos.coords.latitude, lon:pos.coords.longitude, ts:Date.now() };
+            localStorage.setItem(geoKey, JSON.stringify(g)); resolve(g);
+          },
+          ()=>resolve(null),
+          { enableHighAccuracy:false, timeout:8000, maximumAge:300000 }
+        );
+      });
+    }
+    $("#useMyLocation")?.addEventListener("click", updateGeoFromDevice);
+
     // Sidebar switching
     (()=>{
       const view=$("#view"), links=$$(".side-link");
@@ -385,7 +407,16 @@
       links.forEach(b=>b.addEventListener("click", ()=>show(b.dataset.view)));
     })();
 
-    // Chat with lightweight tool routing (time, weather, web)
+    // Helpers for routing
+    function looksLikeWeather(q){ return /\b(weather|forecast|temperature|climate)\b/i.test(q); }
+    function looksLikeTime(q){ return /\b(time|date|day|calendar|now)\b/i.test(q); }
+    function looksLikeSearch(q){ return /\b(news|current affairs|who is|what is|search|latest|happening)\b/i.test(q); }
+    function extractPlace(q){
+      const m = q.match(/\b(?:in|at|for)\s+([A-Za-z\s'.-]{2,})$/i);
+      return m ? m[1].trim() : null;
+    }
+
+    // Chat
     (()=>{
       const log=$("#chatLog"), form=$("#chatForm"), box=$("#chatBox");
       if(!log||!form||!box) return;
@@ -395,31 +426,52 @@
       hist.forEach(m=>add(m.role,m.content));
       $("#clearChat")?.addEventListener("click",()=>{ localStorage.removeItem("elwyn:chat"); log.innerHTML=""; });
 
-      function looksLikeWeather(q){ return /\b(weather|forecast|temperature|climate)\b/i.test(q); }
-      function looksLikeTime(q){ return /\b(time|date|day|calendar|now)\b/i.test(q); }
-      function looksLikeSearch(q){ return /\b(news|current affairs|who is|what is|search|latest)\b/i.test(q); }
+      async function geocodeIfNeeded(q){
+        const place = extractPlace(q);
+        if(!place) return null;
+        const r = await fetch(`${WORKER_URL}/v1/geocode?q=${encodeURIComponent(place)}`, {cache:"no-store"});
+        const j = await r.json().catch(()=>null);
+        if (j?.ok) return { lat: j.lat, lon: j.lon, name: j.name };
+        return null;
+      }
 
-      async function callTool(kind, query){
-        try{
-          if(kind==="time"){
-            const r = await fetch(`${WORKER_URL}/v1/time`, {cache:"no-store"});
-            const j = await r.json();
-            return j.ok ? `⏰ Time now: ${j.display}${j.city?` — ${j.city}, ${j.country||""}`:""} (TZ: ${j.timezone})` : "Time lookup failed.";
-          }
-          if(kind==="weather"){
-            const r = await fetch(`${WORKER_URL}/v1/weather`, {cache:"no-store"});
-            const j = await r.json();
-            if(!j.ok) return "Weather lookup failed.";
-            const c = j.current||{};
-            return `🌤 Weather: ${c.temp_c ?? "?"}°C, wind ${c.wind_speed ?? "?"} m/s, precip ${c.precipitation_mm ?? 0} mm (tz: ${j.where?.timezone||"auto"})`;
-          }
-          if(kind==="search"){
-            const r = await fetch(`${WORKER_URL}/v1/search?q=`+encodeURIComponent(query), {cache:"no-store"});
-            const j = await r.json();
-            if(!j.ok) return "Web search failed.";
-            return `🔎 ${j.summary || "No summary found."}${j.url?`\n\nMore: ${j.url}`:""}`;
-          }
-        }catch(e){ return "Tool error: "+(e?.message||e); }
+      async function callTime(q){
+        // Prefer browser tz; else timezone via geo
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || undefined;
+        let lat, lon;
+        const geo = JSON.parse(localStorage.getItem(geoKey)||"null");
+        if (geo?.lat && geo?.lon) { lat = geo.lat; lon = geo.lon; }
+        const params = new URLSearchParams();
+        if (tz) params.set("tz", tz);
+        if (lat && lon) { params.set("lat", lat); params.set("lon", lon); }
+        const r = await fetch(`${WORKER_URL}/v1/time?${params.toString()}`, {cache:"no-store"});
+        const j = await r.json();
+        return j.ok ? `⏰ ${j.display}${j.city?` — ${j.city}, ${j.country||""}`:""} (TZ: ${j.timezone})` : "Time lookup failed.";
+      }
+
+      async function callWeather(q){
+        // Try explicit place → geocode → weather
+        const geoPlace = await geocodeIfNeeded(q);
+        let lat, lon, label="";
+        if (geoPlace) { lat = geoPlace.lat; lon = geoPlace.lon; label = ` — ${geoPlace.name}`; }
+        else {
+          const geo = JSON.parse(localStorage.getItem(geoKey)||"null");
+          if (geo?.lat && geo?.lon) { lat = geo.lat; lon = geo.lon; }
+        }
+        const url = lat && lon ? `${WORKER_URL}/v1/weather?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}` : `${WORKER_URL}/v1/weather`;
+        const r = await fetch(url, {cache:"no-store"});
+        const j = await r.json();
+        if(!j.ok) return "Weather lookup failed.";
+        const c = j.current||{};
+        return `🌤 Weather${label}: ${c.temp_c ?? "?"}°C, wind ${c.wind_speed ?? "?"} m/s, precip ${c.precipitation_mm ?? 0} mm (tz: ${j.where?.timezone||"auto"})`;
+      }
+
+      async function callSearch(q){
+        const r = await fetch(`${WORKER_URL}/v1/search?q=`+encodeURIComponent(q), {cache:"no-store"});
+        const j = await r.json();
+        if(!j.ok) return "Web search failed or no summary found.";
+        const title = j.title ? `**${j.title}**\n` : "";
+        return `🔎 ${title}${j.summary || "No summary found."}${j.url?`\n\nMore: ${j.url}`:""}`;
       }
 
       form.addEventListener("submit", async (e)=>{
@@ -430,12 +482,11 @@
         const thinking=document.createElement("div"); thinking.className="bubble assistant"; thinking.textContent="…thinking…";
         log.appendChild(thinking); log.scrollTop=log.scrollHeight;
 
-        // Route to tools first
         try{
-          let toolAns=null;
-          if(looksLikeTime(text)) toolAns = await callTool("time", text);
-          else if(looksLikeWeather(text)) toolAns = await callTool("weather", text);
-          else if(looksLikeSearch(text)) toolAns = await callTool("search", text);
+          let toolAns = null;
+          if(looksLikeTime(text))         toolAns = await callTime(text);
+          else if(looksLikeWeather(text)) toolAns = await callWeather(text);
+          else if(looksLikeSearch(text))  toolAns = await callSearch(text);
 
           if(toolAns){
             thinking.remove();
@@ -444,7 +495,7 @@
           }
         }catch{}
 
-        // Otherwise call model chat
+        // Fallback: model chat
         try{
           const r = await fetch(`${WORKER_URL}/v1/chat`, {
             method:"POST", headers:{ "content-type":"application/json" },
@@ -458,6 +509,9 @@
           thinking.remove(); add("assistant","Server error: "+(err?.message||err));
         }
       });
+
+      // Try to seed geolocation silently on first chat view
+      (async ()=>{ const existing = localStorage.getItem(geoKey); if(!existing) await updateGeoFromDevice(); })();
     })();
 
     // Text → Image
