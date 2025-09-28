@@ -199,4 +199,144 @@
             localStorage.setItem(geoKey, JSON.stringify(g)); resolve(g);
           },
           ()=>resolve(null),
-          { enableHighAccuracy:false, timeout
+          { enableHighAccuracy:false, timeout:8000, maximumAge:300000 }
+        );
+      });
+    }
+    $("#useMyLocation")?.addEventListener("click", updateGeoFromDevice);
+
+    // Sidebar switching
+    (()=>{
+      const view=$("#view"), links=$$(".side-link");
+      function show(name){
+        view.querySelectorAll(".panel").forEach(p=>p.classList.remove("is-visible"));
+        view.querySelector('[data-panel="'+name+'"]')?.classList.add("is-visible");
+        links.forEach(b=>b.classList.toggle("is-active", b.dataset.view===name));
+        window.scrollTo({ top:0, behavior:"smooth" });
+      }
+      links.forEach(b=>b.addEventListener("click", ()=>show(b.dataset.view)));
+    })();
+
+    // Match helpers
+    function looksLikeWeather(q){ return /\b(weather|forecast|temperature|climate)\b/i.test(q); }
+    function looksLikeTime(q){ return /\b(time|date|day|calendar|now)\b/i.test(q); }
+    function looksLikeNews(q){ return /\b(news|headlines|latest|breaking|current affairs)\b/i.test(q); }
+    function looksLikeSearch(q){ return /\b(who is|what is|search)\b/i.test(q); }
+    function extractPlace(q){
+      const m = q.match(/\b(?:in|at|for)\s+([A-Za-z\s'.-]{2,})$/i);
+      return m ? m[1].trim() : null;
+    }
+
+    // Chat
+    (()=>{
+      const log=$("#chatLog"), form=$("#chatForm"), box=$("#chatBox");
+      if(!log||!form||!box) return;
+      const hist = JSON.parse(localStorage.getItem("elwyn:chat")||"[]");
+      const add = (role,text)=>{ const d=document.createElement("div"); d.className="bubble "+(role==="user"?"user":"assistant"); d.textContent=text; log.appendChild(d); log.scrollTop=log.scrollHeight; };
+      const save=()=> localStorage.setItem("elwyn:chat", JSON.stringify(hist));
+      hist.forEach(m=>add(m.role,m.content));
+      $("#clearChat")?.addEventListener("click",()=>{ localStorage.removeItem("elwyn:chat"); log.innerHTML=""; });
+
+      async function geocode(place){
+        const r = await fetch(`${WORKER_URL}/v1/geocode?q=${encodeURIComponent(place)}`, {cache:"no-store"});
+        const j = await r.json().catch(()=>null);
+        return j?.ok ? j : null;
+      }
+
+      async function callTime(q){
+        const place = extractPlace(q);
+        const tz = !place ? (Intl.DateTimeFormat().resolvedOptions().timeZone || undefined) : undefined;
+        let params = new URLSearchParams();
+        if (place) {
+          const g = await geocode(place);
+          if (g) { params.set("q", place); params.set("lat", g.lat); params.set("lon", g.lon); }
+          else { params.set("q", place); } // Worker will try to geocode as fallback
+        } else {
+          const geo = JSON.parse(localStorage.getItem(geoKey)||"null");
+          if (tz) params.set("tz", tz);
+          if (geo?.lat && geo?.lon) { params.set("lat", geo.lat); params.set("lon", geo.lon); }
+        }
+        const r = await fetch(`${WORKER_URL}/v1/time?`+params.toString(), {cache:"no-store"});
+        const j = await r.json();
+        return j.ok ? `⏰ ${j.display}${j.city?` — ${j.city}`:""} (TZ: ${j.timezone})` : "Time lookup failed.";
+      }
+
+      async function callWeather(q){
+        const place = extractPlace(q);
+        let url;
+        if (place) {
+          const g = await geocode(place);
+          if (g) url = `${WORKER_URL}/v1/weather?lat=${encodeURIComponent(g.lat)}&lon=${encodeURIComponent(g.lon)}`;
+        }
+        if (!url) {
+          const geo = JSON.parse(localStorage.getItem(geoKey)||"null");
+          url = (geo?.lat && geo?.lon)
+            ? `${WORKER_URL}/v1/weather?lat=${encodeURIComponent(geo.lat)}&lon=${encodeURIComponent(geo.lon)}`
+            : `${WORKER_URL}/v1/weather`;
+        }
+        const r = await fetch(url, {cache:"no-store"});
+        const j = await r.json();
+        if(!j.ok) return "Weather lookup failed.";
+        const c = j.current||{};
+        return `🌤 Weather: ${c.temp_c ?? "?"}°C, wind ${c.wind_speed ?? "?"} m/s, precip ${c.precipitation_mm ?? 0} mm (tz: ${j.where?.timezone||"auto"})`;
+      }
+
+      async function callNews(q){
+        // Use /v1/news for freshest items; if user gave a topic, pass it; else pass "top stories"
+        const r = await fetch(`${WORKER_URL}/v1/news?q=`+encodeURIComponent(q), {cache:"no-store"});
+        const j = await r.json();
+        if(!j.ok || !Array.isArray(j.items) || !j.items.length) return "No recent headlines found.";
+        const top = j.items.map(it=>`• ${it.title}\n  ${it.link}`).join("\n");
+        return `📰 Latest headlines for “${j.query}”:\n\n${top}`;
+      }
+
+      async function callSearch(q){
+        const r = await fetch(`${WORKER_URL}/v1/search?q=`+encodeURIComponent(q), {cache:"no-store"});
+        const j = await r.json();
+        if(!j.ok) return "Web search failed or no summary found.";
+        const title = j.title ? `${j.title}\n` : "";
+        return `🔎 ${title}${j.summary || "No summary found."}${j.url?`\n\nMore: ${j.url}`:""}`;
+      }
+
+      form.addEventListener("submit", async (e)=>{
+        e.preventDefault();
+        const text=(box.value||"").trim(); if(!text) return;
+        box.value=""; hist.push({role:"user",content:text}); add("user",text); save();
+
+        const thinking=document.createElement("div"); thinking.className="bubble assistant"; thinking.textContent="…thinking…";
+        log.appendChild(thinking); log.scrollTop=log.scrollHeight;
+
+        try{
+          let toolAns = null;
+          if (looksLikeTime(text))         toolAns = await callTime(text);
+          else if (looksLikeWeather(text)) toolAns = await callWeather(text);
+          else if (looksLikeNews(text))    toolAns = await callNews(text);
+          else if (looksLikeSearch(text))  toolAns = await callSearch(text);
+
+          if(toolAns){
+            thinking.remove();
+            hist.push({role:"assistant",content:toolAns}); save(); add("assistant", toolAns);
+            return;
+          }
+        }catch{}
+
+        // Fallback model chat (no "— via ..." tag anymore)
+        try{
+          const r = await fetch(`${WORKER_URL}/v1/chat`, {
+            method:"POST", headers:{ "content-type":"application/json" },
+            body: JSON.stringify({ model: currentModel(), messages: hist })
+          });
+          const j = await r.json().catch(()=>({}));
+          const reply = j.reply || "(no reply)";
+          thinking.remove(); hist.push({role:"assistant",content:reply}); save(); add("assistant", reply);
+        }catch(err){
+          thinking.remove(); add("assistant","Server error: "+(err?.message||err));
+        }
+      });
+
+      // Seed geolocation quietly for accuracy
+      (async ()=>{ const existing = localStorage.getItem(geoKey); if(!existing) await updateGeoFromDevice(); })();
+    })();
+  </script>
+</body>
+</html>
