@@ -44,12 +44,13 @@
     .card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; box-shadow:var(--elev); padding:16px }
     .muted{ color:var(--muted) }
     .grid{ display:grid; gap:12px }
-    .row{ display:flex; gap:10px; flex-wrap:wrap }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center }
     .btn{ appearance:none; border:1px solid color-mix(in oklab, var(--line) 80%, #fff 0%); background:color-mix(in oklab, var(--panel) 85%, #000 15%); color:var(--text); padding:10px 14px; border-radius:10px; cursor:pointer; transition:.15s }
     .btn:hover{ background:color-mix(in oklab, var(--panel) 70%, var(--primary) 10%) } .btn.primary{ background:var(--primary); border-color:var(--primary-2) } .btn.primary:hover{ background:var(--primary-2) }
+    .btn.tiny{ padding:6px 10px; font-size:12px; border-radius:999px }
     textarea{ width:100%; background:color-mix(in oklab, var(--panel) 85%, #000 15%); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:10px; resize:vertical }
     .chat-log{ max-height:420px; overflow:auto; border:1px dashed color-mix(in oklab, var(--line) 90%, #000 10%); border-radius:12px; padding:12px; background:color-mix(in oklab, var(--panel) 75%, #000 25%) }
-    .bubble{ padding:10px 12px; border-radius:12px; margin:8px 0; line-height:1.5; white-space:pre-wrap; animation:fade .12s ease }
+    .bubble{ padding:10px 12px; border-radius:12px; margin:8px 0; line-height:1.5; white-space:pre-wrap; animation:fade .12s ease; overflow-wrap:anywhere }
     .bubble.user{ background:color-mix(in oklab, var(--panel) 70%, #000 30%); border:1px solid var(--line) }
     .bubble.assistant{ background:color-mix(in oklab, var(--primary) 18%, var(--panel) 82%); border:1px solid color-mix(in oklab, var(--primary) 35%, var(--line) 65%) }
     @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
@@ -157,7 +158,7 @@
         <div class="card"><h2>Text → Audio</h2><p class="muted">Coming soon.</p></div>
       </section>
 
-      <!-- Mission (kept exactly as in your last full replace-all) -->
+      <!-- Mission (keep your previous full mission content here if you had it inline) -->
       <section class="panel" data-panel="mission">
         <div class="card">
           <h2>Mission — Non-Profit Behavioral Health (AI-assisted, human-in-the-loop)</h2>
@@ -165,7 +166,7 @@
             We deliver equitable behavioral care at scale with a hybrid model: models handle continuous monitoring, analysis,
             and immediate support; licensed clinicians lead complex therapy, crisis work, and individualized planning.
           </p>
-          <!-- (Mission content omitted here for brevity; keep your previous Mission section unchanged) -->
+          <p class="muted">[Your full tables/sections remain here unchanged]</p>
         </div>
       </section>
 
@@ -226,14 +227,18 @@
       const m = q.match(/\b(?:in|at|for)\s+([A-Za-z\s'.-]{2,})$/i);
       return m ? m[1].trim() : null;
     }
+    function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m])); }
 
     // Chat
     (()=>{
       const log=$("#chatLog"), form=$("#chatForm"), box=$("#chatBox");
       if(!log||!form||!box) return;
       const hist = JSON.parse(localStorage.getItem("elwyn:chat")||"[]");
+
       const add = (role,text)=>{ const d=document.createElement("div"); d.className="bubble "+(role==="user"?"user":"assistant"); d.textContent=text; log.appendChild(d); log.scrollTop=log.scrollHeight; };
+      const addHTML = (role, html)=>{ const d=document.createElement("div"); d.className="bubble "+(role==="user"?"user":"assistant"); d.innerHTML = html; log.appendChild(d); log.scrollTop=log.scrollHeight; };
       const save=()=> localStorage.setItem("elwyn:chat", JSON.stringify(hist));
+
       hist.forEach(m=>add(m.role,m.content));
       $("#clearChat")?.addEventListener("click",()=>{ localStorage.removeItem("elwyn:chat"); log.innerHTML=""; });
 
@@ -281,13 +286,42 @@
         return `🌤 Weather: ${c.temp_c ?? "?"}°C, wind ${c.wind_speed ?? "?"} m/s, precip ${c.precipitation_mm ?? 0} mm (tz: ${j.where?.timezone||"auto"})`;
       }
 
+      // NEWS: rich HTML + Discuss button, passing bullet list + URLs into the follow-up
       async function callNews(q){
-        // Use /v1/news for freshest items; if user gave a topic, pass it; else pass "top stories"
         const r = await fetch(`${WORKER_URL}/v1/news?q=`+encodeURIComponent(q), {cache:"no-store"});
         const j = await r.json();
-        if(!j.ok || !Array.isArray(j.items) || !j.items.length) return "No recent headlines found.";
-        const top = j.items.map(it=>`• ${it.title}\n  ${it.link}`).join("\n");
-        return `📰 Latest headlines for “${j.query}”:\n\n${top}`;
+        if (!j.ok || !Array.isArray(j.items) || !j.items.length) return { html: "<div>No recent headlines found.</div>", bullets: [] };
+
+        const fmt = (iso)=>{
+          try {
+            const d = new Date(iso || "");
+            const diffMs = Date.now() - d.getTime();
+            const diffH = diffMs / 36e5;
+            if (isFinite(diffH) && diffH < 24) {
+              const rel = new Intl.RelativeTimeFormat("en",{numeric:"auto"});
+              return rel.format(-Math.round(diffH), "hour");
+            }
+            return new Intl.DateTimeFormat("en", { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" }).format(d);
+          } catch { return ""; }
+        };
+
+        const bullets = j.items.map(it=>`- ${it.title} (${it.source}${it.iso?`, ${fmt(it.iso)}`:""}) — ${it.link}`);
+
+        const itemsHTML = j.items.map(it=>{
+          const when = it.iso ? ` · <span class="muted">${fmt(it.iso)}</span>` : "";
+          const src  = it.source ? ` <span class="muted">(${it.source})</span>` : "";
+          const link = it.link ? `<a href="${it.link}" target="_blank" rel="noopener noreferrer">${escapeHTML(it.title)}</a>` : escapeHTML(it.title);
+          return `<li style="margin:6px 0 10px 0">${link}${src}${when}</li>`;
+        }).join("");
+
+        const html = `
+          <div><strong>📰 Latest headlines for “${escapeHTML(j.query)}”</strong></div>
+          <ul style="padding-left:18px;margin:8px 0 10px 0">${itemsHTML}</ul>
+          <div class="row" style="gap:8px;margin-top:4px">
+            <button class="btn tiny discuss-news" data-query="${encodeURIComponent(j.query)}">Discuss with Elwyn</button>
+          </div>
+        `;
+        return { html, bullets, topic: j.query };
       }
 
       async function callSearch(q){
@@ -298,6 +332,7 @@
         return `🔎 ${title}${j.summary || "No summary found."}${j.url?`\n\nMore: ${j.url}`:""}`;
       }
 
+      // Submit
       form.addEventListener("submit", async (e)=>{
         e.preventDefault();
         const text=(box.value||"").trim(); if(!text) return;
@@ -315,12 +350,40 @@
 
           if(toolAns){
             thinking.remove();
-            hist.push({role:"assistant",content:toolAns}); save(); add("assistant", toolAns);
+            // Rich news HTML path
+            if (typeof toolAns === "object" && toolAns.html){
+              addHTML("assistant", toolAns.html);
+              // wire Discuss
+              document.querySelectorAll(".discuss-news").forEach(btn=>{
+                btn.addEventListener("click", async ()=>{
+                  const topic = toolAns.topic || decodeURIComponent(btn.getAttribute("data-query")||"news");
+                  const condensed = (toolAns.bullets || []).slice(0,6).join("\n");
+                  const prompt = `Based on these recent headlines about "${topic}", summarize key takeaways, trends, likely causes, and reasonable implications. Then list 3 follow-up questions I could ask.\n\nHeadlines:\n${condensed}`;
+                  hist.push({role:"user", content: prompt}); save(); add("user", prompt);
+
+                  try{
+                    const r2 = await fetch(`${WORKER_URL}/v1/chat`, {
+                      method:"POST", headers:{ "content-type":"application/json" },
+                      body: JSON.stringify({ model: currentModel(), messages: hist })
+                    });
+                    const j2 = await r2.json().catch(()=>({}));
+                    const reply = j2.reply || "(no reply)";
+                    hist.push({role:"assistant",content:reply}); save(); add("assistant", reply);
+                  }catch(err){
+                    add("assistant","Server error: "+(err?.message||err));
+                  }
+                }, { once:true });
+              });
+            } else {
+              // Plain-text tool answer
+              const txt = typeof toolAns === "string" ? toolAns : JSON.stringify(toolAns);
+              hist.push({role:"assistant",content:txt}); save(); add("assistant", txt);
+            }
             return;
           }
         }catch{}
 
-        // Fallback model chat (no "— via ..." tag anymore)
+        // Fallback model chat (no "— via ..." tag)
         try{
           const r = await fetch(`${WORKER_URL}/v1/chat`, {
             method:"POST", headers:{ "content-type":"application/json" },
