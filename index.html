@@ -73,7 +73,7 @@
   </header>
 
   <main class="layout">
-    <!-- LEFT: Nav first -->
+    <!-- LEFT: Nav -->
     <aside class="side">
       <div class="side-group">
         <div class="side-title">Navigate</div>
@@ -84,7 +84,7 @@
         <button class="side-link" data-view="mission">Mission</button>
       </div>
 
-      <!-- NEW: Programs (inserted BEFORE Tools) -->
+      <!-- PROGRAMS (before Tools) -->
       <div class="side-group">
         <div class="side-title">Programs</div>
         <button class="side-link" data-view="therapy">Therapy — AI-Assisted Online <span class="badge">Soon</span></button>
@@ -94,7 +94,7 @@
         <button class="side-link" data-view="giving">Giving Elwyn — Support · Donate · Sponsor Care</button>
       </div>
 
-      <!-- Tools BELOW -->
+      <!-- TOOLS -->
       <div class="side-group">
         <div class="side-title">Tools</div>
         <label class="muted tiny" for="themeSelect">Theme</label>
@@ -151,7 +151,7 @@
       <section class="panel" data-panel="image">
         <div class="card">
           <h2>Text → Image</h2>
-        <form id="imgForm" class="grid">
+          <form id="imgForm" class="grid">
             <textarea id="imgPrompt" rows="3" placeholder="Describe the image…"></textarea>
             <div class="row"><button class="btn primary" type="submit">Generate</button></div>
           </form>
@@ -169,26 +169,20 @@
         <div class="card"><h2>Text → Audio <span class="badge">Soon</span></h2><p class="muted">Coming soon.</p></div>
       </section>
 
-      <!-- Mission (your long content remains here if you already placed it) -->
+      <!-- Mission (keep your full mission content here if already placed) -->
       <section class="panel" data-panel="mission">
         <div class="card">
           <h2>Mission — Non-Profit Behavioral Health (AI-assisted, human-in-the-loop)</h2>
           <p class="muted">We deliver equitable behavioral care at scale with a hybrid model: models handle continuous monitoring, analysis, and immediate support; licensed clinicians lead complex therapy, crisis work, and individualized planning.</p>
-          <p class="muted">[Your full mission tables section stays here.]</p>
+          <p class="muted">[Your full mission tables/sections go here.]</p>
         </div>
       </section>
 
-      <!-- NEW PROGRAM PAGES -->
-
+      <!-- PROGRAM PAGES (concise paragraphs only) -->
       <section class="panel" data-panel="therapy">
         <div class="card">
           <h2>Therapy — AI-Assisted Online <span class="badge">Soon</span></h2>
-          <p>Human-led therapy delivered by licensed clinicians via video, phone, or chat—enhanced by an AI copilot for faster notes and tailored exercises.</p>
-          <ul>
-            <li><strong>For the world:</strong> fast remote access, multilingual support, low-bandwidth mode, clear goals (CBT/DBT).</li>
-            <li><strong>For Elwyn staff:</strong> auto-drafted notes, care-plan templates, supervision-ready summaries, consistent outcomes tracking.</li>
-          </ul>
-          <p class="muted"><strong>Disclosure:</strong> AI assists clinicians; it never diagnoses or replaces clinical judgment.</p>
+          <p>Human-led therapy delivered by licensed clinicians via video, phone, or chat—lightly assisted by an AI copilot for faster notes and tailored exercises.</p>
           <div class="row"><button class="btn" disabled>Start Therapy (coming soon)</button></div>
         </div>
       </section>
@@ -196,11 +190,7 @@
       <section class="panel" data-panel="counseling">
         <div class="card">
           <h2>Counseling — AI-Assisted Online <span class="badge">Soon</span></h2>
-          <p>Brief, skills-focused sessions for day-to-day challenges, with clinician review and AI-assisted summaries.</p>
-          <ul>
-            <li><strong>For the world:</strong> quick starts, practical tools, flexible chat/video.</li>
-            <li><strong>For Elwyn staff:</strong> standardized short-form notes, resource links, simple escalation to Therapy when needed.</li>
-          </ul>
+          <p>Brief, skills-focused sessions for everyday challenges, with clinician review and AI-assisted summaries.</p>
           <div class="row"><button class="btn" disabled>Book Counseling (coming soon)</button></div>
         </div>
       </section>
@@ -208,11 +198,7 @@
       <section class="panel" data-panel="assessment">
         <div class="card">
           <h2>Assessment — Remote, AI-Guided <span class="badge">Soon</span></h2>
-          <p>Clinician-reviewed intake with evidence-based screeners (e.g., PHQ-9, GAD-7, C-SSRS). AI prompts ensure completeness; clinicians confirm results.</p>
-          <ul>
-            <li><strong>For the world:</strong> faster onboarding, clear next steps, language accessibility.</li>
-            <li><strong>For Elwyn staff:</strong> fewer admin gaps, consistent documentation, smarter triage and referrals.</li>
-          </ul>
+          <p>Clinician-reviewed intake using validated screeners (PHQ-9, GAD-7, C-SSRS). AI prompts help ensure completeness; clinicians confirm results.</p>
           <div class="row"><button class="btn" disabled>Start Assessment (coming soon)</button></div>
         </div>
       </section>
@@ -220,11 +206,7 @@
       <section class="panel" data-panel="safety">
         <div class="card">
           <h2>Safety Plan — Digital Plan with AI Support <span class="badge">Soon</span></h2>
-          <p>Create, update, and share a personal safety plan—warning signs, coping steps, supports, crisis options. AI reminders help keep it current; clinicians approve.</p>
-          <ul>
-            <li><strong>For the world:</strong> one-tap share with family/providers, gentle check-ins, export to PDF.</li>
-            <li><strong>For Elwyn staff:</strong> templates, version history, approvals, audit-ready logs.</li>
-          </ul>
+          <p>Create and update a personal safety plan—warning signs, coping steps, supports, and crisis options—with gentle AI reminders. Clinicians approve finalized plans.</p>
           <p class="muted"><strong>Emergency:</strong> Call 911 or 988. This tool does not replace emergency services.</p>
           <div class="row"><button class="btn" disabled>Create Safety Plan (coming soon)</button></div>
         </div>
@@ -233,11 +215,7 @@
       <section class="panel" data-panel="giving">
         <div class="card">
           <h2>Giving (Elwyn) — Support · Donate · Sponsor Care</h2>
-          <p>Power access to therapy, assessments, and safety plans for families in need.</p>
-          <ul>
-            <li><strong>For the world:</strong> one-time gifts, monthly giving, or sponsor sessions; impact updates.</li>
-            <li><strong>For Elwyn staff:</strong> employer match, volunteer options, transparent reporting and receipts.</li>
-          </ul>
+          <p>Help fund access to therapy, assessments, and safety plans for families in need through one-time gifts, monthly support, or session sponsorships.</p>
           <div class="row">
             <button class="btn primary" disabled>Donate (coming soon)</button>
             <button class="btn" disabled>Sponsor a Session (coming soon)</button>
@@ -282,7 +260,7 @@
     }
     $("#useMyLocation")?.addEventListener("click", updateGeoFromDevice);
 
-    // Sidebar switching (works for all side-link buttons)
+    // Sidebar switching
     (()=>{
       const view=$("#view"), links=$$(".side-link");
       function show(name){
@@ -305,7 +283,7 @@
     }
     function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m])); }
 
-    // Chat with tools (time, weather, news, search)
+    // Chat + tools (time, weather, news, search)
     (()=>{
       const log=$("#chatLog"), form=$("#chatForm"), box=$("#chatBox");
       if(!log||!form||!box) return;
@@ -362,7 +340,7 @@
         return `🌤 Weather: ${c.temp_c ?? "?"}°C, wind ${c.wind_speed ?? "?"} m/s, precip ${c.precipitation_mm ?? 0} mm (tz: ${j.where?.timezone||"auto"})`;
       }
 
-      // NEWS: rich HTML + Discuss button (passes bullet list + URLs)
+      // NEWS: rich HTML + Discuss button
       async function callNews(q){
         const r = await fetch(`${WORKER_URL}/v1/news?q=`+encodeURIComponent(q), {cache:"no-store"});
         const j = await r.json();
@@ -456,7 +434,7 @@
           }
         }catch{}
 
-        // Fallback model chat
+        // Fallback model chat (no “— via …”)
         try{
           const r = await fetch(`${WORKER_URL}/v1/chat`, {
             method:"POST", headers:{ "content-type":"application/json" },
@@ -470,7 +448,7 @@
         }
       });
 
-      // Seed geolocation quietly for accuracy
+      // Seed geolocation quietly
       (async ()=>{ const existing = localStorage.getItem(geoKey); if(!existing) await updateGeoFromDevice(); })();
     })();
   </script>
