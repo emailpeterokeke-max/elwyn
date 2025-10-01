@@ -84,7 +84,6 @@
         <button class="side-link" data-view="mission">Mission</button>
       </div>
 
-      <!-- PROGRAMS (before Tools) -->
       <div class="side-group">
         <div class="side-title">Programs</div>
         <button class="side-link" data-view="therapy">Therapy — AI-Assisted Online <span class="badge">Soon</span></button>
@@ -94,7 +93,6 @@
         <button class="side-link" data-view="giving">Giving Elwyn — Support · Donate · Sponsor Care</button>
       </div>
 
-      <!-- TOOLS -->
       <div class="side-group">
         <div class="side-title">Tools</div>
         <label class="muted tiny" for="themeSelect">Theme</label>
@@ -129,7 +127,7 @@
       <section class="panel is-visible" data-panel="chat">
         <div class="card">
           <h2>Ask Elwyn AI</h2>
-          <p class="muted">Smart chat with built-in tools</p>
+          <p class="muted">Smart chat with built-in tools for time, weather, and web/news lookups.</p>
           <div class="grid">
             <div id="chatLog" class="chat-log" aria-live="polite"></div>
             <form id="chatForm" class="grid">
@@ -153,7 +151,9 @@
           <h2>Text → Image</h2>
           <form id="imgForm" class="grid">
             <textarea id="imgPrompt" rows="3" placeholder="Describe the image…"></textarea>
-            <div class="row"><button class="btn primary" type="submit">Generate</button></div>
+            <div class="row">
+              <button class="btn primary" type="submit">Generate</button>
+            </div>
           </form>
           <div id="imgOut" class="grid"></div>
         </div>
@@ -169,17 +169,188 @@
         <div class="card"><h2>Text → Audio <span class="badge">Soon</span></h2><p class="muted">Coming soon.</p></div>
       </section>
 
-      <!-- Mission (keep your full mission content here if already placed) -->
+      <!-- Mission -->
       <section class="panel" data-panel="mission">
         <div class="card">
-          <h2>Mission — Non-Profit Behavioral Health (AI-assisted, human-in-the-loop)</h2>
-          <p class="muted">We deliver equitable behavioral care at scale with a hybrid model: models handle continuous monitoring, analysis, and immediate support; licensed clinicians lead complex therapy, crisis work, and individualized planning.</p>
-          <p class="muted">[Your full mission tables/sections go here.]</p>
+          <div class="mission">
+            <style>
+              .mission h2, .mission h3 { margin: 0 0 8px 0 }
+              .mission h4 { margin: 14px 0 6px 0 }
+              .mission p { margin: 6px 0 10px 0 }
+              .mission .muted { color: var(--muted) }
+              .mission .grid-2 { display:grid; gap:12px; grid-template-columns: 1fr 1fr }
+              @media (max-width: 900px){ .mission .grid-2 { grid-template-columns: 1fr } }
+              .mission table { width:100%; border-collapse: collapse; margin: 8px 0 14px 0; background: color-mix(in oklab, var(--panel) 90%, #000 10%); border:1px solid var(--line); border-radius: 10px; overflow: hidden }
+              .mission th, .mission td { text-align:left; padding:10px 12px; vertical-align:top; border-bottom:1px solid var(--line) }
+              .mission th { background: color-mix(in oklab, var(--panel) 70%, var(--primary) 10%); font-weight:700 }
+              .mission tr:last-child td { border-bottom: none }
+              .mission .note { padding:10px 12px; border:1px dashed var(--line); border-radius:10px; background: color-mix(in oklab, var(--panel) 85%, #000 15%); margin-top:8px }
+            </style>
+
+            <h2>Mission — Non-Profit Behavioral Health (AI-assisted, human-in-the-loop)</h2>
+            <p class="muted">We expand access to high-quality behavioral health services by pairing models for continuous monitoring and instant support with licensed clinicians for complex care, crisis intervention, and individualized planning. AI assists; clinicians lead.</p>
+
+            <div class="note">
+              <strong>Key Differentiator:</strong> Hybrid human–AI care model. Models handle routine monitoring, risk signals, and data synthesis; human clinicians focus on therapeutic relationships, crisis work, and treatment planning. This increases reach while maintaining quality and safety.
+            </div>
+
+            <h3 style="margin-top:16px">Program Pillars</h3>
+            <div class="grid-2">
+              <div>
+                <h4>AI-Powered Assessment & Intake</h4>
+                <ul>
+                  <li>Intelligent screening that conducts preliminary behavioral assessments.</li>
+                  <li>Risk stratification algorithms to prioritize high-need clients.</li>
+                  <li>Automated crisis detection via speech, text, or behavioral indicators.</li>
+                  <li>Cultural competency matching to pair clients with appropriate providers.</li>
+                </ul>
+
+                <h4>Remote Therapeutic Platforms</h4>
+                <ul>
+                  <li>AI-enhanced teletherapy with real-time sentiment analysis and intervention suggestions.</li>
+                  <li>Virtual reality exposure therapy for phobias, PTSD, and anxiety disorders.</li>
+                  <li>Chatbot crisis counselors for 24/7 immediate support between sessions.</li>
+                  <li>Adaptive therapy modules that adjust to client progress and engagement.</li>
+                </ul>
+              </div>
+
+              <div>
+                <h4>Personalized Treatment Planning</h4>
+                <ul>
+                  <li>Evidence-based treatment matching based on client profile and outcomes data.</li>
+                  <li>Dynamic adjustments from real-time progress monitoring.</li>
+                  <li>Predictive relapse prevention that flags warning signs early.</li>
+                </ul>
+
+                <h4>Digital Engagement & Support</h4>
+                <ul>
+                  <li>Mobile apps with AI coaching for practice between sessions.</li>
+                  <li>Automated check-ins and mood tracking with escalation protocols.</li>
+                  <li>Peer support matching by shared experiences and compatibility.</li>
+                  <li>Gamified behavioral interventions to boost engagement.</li>
+                </ul>
+
+                <h4>Operational Excellence</h4>
+                <ul>
+                  <li>Smart scheduling that optimizes provider–client matching and availability.</li>
+                  <li>Automated documentation and progress note generation.</li>
+                  <li>Outcome tracking dashboards for funders and stakeholders.</li>
+                  <li>Multi-language support with real-time translation.</li>
+                </ul>
+              </div>
+            </div>
+
+            <h3 style="margin-top:8px">I. Clinical &amp; Direct Service Features</h3>
+            <p class="muted">Features that directly improve care quality and access in remote settings.</p>
+            <table>
+              <thead>
+                <tr><th style="width:28%">Feature</th><th style="width:34%">AI Mechanism</th><th>Non-Profit Value</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>24/7 Conversational AI Support</td>
+                  <td>NLP chatbots/virtual assistants informed by CBT/DBT skills.</td>
+                  <td>Immediate, low-barrier support outside business hours to maximize accessibility.</td>
+                </tr>
+                <tr>
+                  <td>Personalized Interventions</td>
+                  <td>ML analyzes mood tracking, text/voice patterns, and progress data.</td>
+                  <td>Tailors resources to the user’s real-time state for higher treatment relevance.</td>
+                </tr>
+                <tr>
+                  <td>Early Crisis Detection &amp; Escalation</td>
+                  <td>Sentiment analysis &amp; vocal biomarkers detect high-risk language/shifts.</td>
+                  <td>Flags SI/high distress and triggers playbooks (hotline, clinician connect, alerts).</td>
+                </tr>
+                <tr>
+                  <td>Remote Progress Monitoring</td>
+                  <td>Wearables/health APIs (sleep, HRV, activity) plus mood diaries.</td>
+                  <td>Objective, continuous data enables measurement-informed care and relapse tracking.</td>
+                </tr>
+                <tr>
+                  <td>Automated Clinical Documentation</td>
+                  <td>Ambient transcription + structuring during sessions (with consent).</td>
+                  <td>Drafts progress notes, summaries, and plans so clinicians can focus on care.</td>
+                </tr>
+                <tr>
+                  <td>Diagnosis &amp; Treatment Support</td>
+                  <td>Predictive analytics over history, assessments, and behavior patterns.</td>
+                  <td>Assists clinicians with likely diagnoses and evidence-aligned interventions.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>II. Operational &amp; Efficiency Features</h3>
+            <p class="muted">Capabilities that stretch limited resources and increase reach.</p>
+            <table>
+              <thead>
+                <tr><th style="width:28%">Feature</th><th style="width:34%">AI Mechanism</th><th>Non-Profit Value</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Workflow Automation</td>
+                  <td>RPA for scheduling, reminders, and follow-ups.</td>
+                  <td>Reduces admin burden and costs; helps prevent staff burnout.</td>
+                </tr>
+                <tr>
+                  <td>Resource Optimization</td>
+                  <td>Predictive modeling for demand, staffing, and high-risk periods.</td>
+                  <td>Targets scarce therapist time and funds where need is greatest.</td>
+                </tr>
+                <tr>
+                  <td>Grant Writing &amp; Reporting</td>
+                  <td>Generative AI drafts impact reports and tailored proposals.</td>
+                  <td>Improves fundraising efficiency with lower overhead.</td>
+                </tr>
+                <tr>
+                  <td>Customizable Reporting Dashboards</td>
+                  <td>Automated data pipelines and visualization.</td>
+                  <td>Real-time outcomes for boards, donors, and regulators.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>III. Non-Profit &amp; Ethical Mandates</h3>
+            <p class="muted">Foundational policies for safe, equitable care at scale.</p>
+            <table>
+              <thead>
+                <tr><th style="width:34%">Feature</th><th>Description &amp; Rationale</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>HIPAA/GDPR-Compliant Security</td>
+                  <td>End-to-end encryption, advanced anonymization, and robust access controls; privacy compliance is non-negotiable for sensitive mental health data.</td>
+                </tr>
+                <tr>
+                  <td>Equity &amp; Bias Mitigation</td>
+                  <td>Diverse training sets and regular audits to ensure fair recommendations and avoid perpetuating disparities.</td>
+                </tr>
+                <tr>
+                  <td>Cost-Sensitive Scalability</td>
+                  <td>Serve large user volumes with low variable cost to reach uninsured/underinsured populations.</td>
+                </tr>
+                <tr>
+                  <td>Transparency &amp; Human Oversight</td>
+                  <td>Human-in-the-loop by design; clinicians make final decisions and users are informed when interacting with AI.</td>
+                </tr>
+                <tr>
+                  <td>Ethical Data Ownership</td>
+                  <td>Clear policies granting users control and ownership over their behavioral health data.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>Operational Safeguards &amp; Copilots</h3>
+            <ul>
+              <li><strong>Intake triage bot:</strong> collects basics, screens risk (SI/HI), routes to clinician.</li>
+              <li><strong>Safety classifier:</strong> real-time risk flags in chat/calls; auto-escalation playbooks.</li>
+              <li><strong>Clinician copilot:</strong> draft notes, summaries, ICD-10/SNOMED suggestions, after-visit plans.</li>
+            </ul>
+          </div>
         </div>
       </section>
 
-      <!-- PROGRAM PAGES (exact wording) -->
-
+      <!-- Programs (exact wording you provided) -->
       <section class="panel" data-panel="therapy">
         <div class="card">
           <h2>Therapy — AI-Assisted Online <span class="badge">Soon</span></h2>
@@ -252,9 +423,10 @@
   <footer class="footer">© 2025 Elwyn AI</footer>
 
   <script>
+    // === CONFIG ===
     const WORKER_URL = "/api";
     const DEFAULT_MODEL = "model-5-thinking";
-    const $ = (s)=>document.querySelector(s);
+    const $  = (s)=>document.querySelector(s);
     const $$ = (s)=>[...document.querySelectorAll(s)];
     const currentModel = ()=> $("#engineSelect")?.value || DEFAULT_MODEL;
 
@@ -265,7 +437,7 @@
       sel?.addEventListener("change", ()=>{ const t=sel.value; document.body.setAttribute("data-theme", t); localStorage.setItem("elwyn:theme", t); });
     })();
 
-    // Device location cache
+    // Geolocation cache (for weather/time)
     const geoKey = "elwyn:geo";
     async function updateGeoFromDevice(){
       if(!("geolocation" in navigator)) return null;
@@ -287,47 +459,45 @@
       const view=$("#view"), links=$$(".side-link");
       function show(name){
         view.querySelectorAll(".panel").forEach(p=>p.classList.remove("is-visible"));
-        view.querySelector('[data-panel="'+name+'"]')?.classList.add("is-visible");
+        view.querySelector(`[data-panel="${name}"]`)?.classList.add("is-visible");
         links.forEach(b=>b.classList.toggle("is-active", b.dataset.view===name));
         window.scrollTo({ top:0, behavior:"smooth" });
       }
       links.forEach(b=>b.addEventListener("click", ()=>show(b.dataset.view)));
     })();
 
-    // Match helpers
-    function looksLikeWeather(q){ return /\b(weather|forecast|temperature|climate)\b/i.test(q); }
-    function looksLikeTime(q){ return /\b(time|date|day|calendar|now)\b/i.test(q); }
-    function looksLikeNews(q){ return /\b(news|headlines|latest|breaking|current affairs)\b/i.test(q); }
-    function looksLikeSearch(q){ return /\b(who is|what is|search)\b/i.test(q); }
-    function extractPlace(q){
-      const m = q.match(/\b(?:in|at|for)\s+([A-Za-z\s'.-]{2,})$/i);
-      return m ? m[1].trim() : null;
-    }
-    function escapeHTML(s){ return String(s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m])); }
+    // Helpers to detect tools
+    const looksLikeWeather = (q)=> /\b(weather|forecast|temperature|climate)\b/i.test(q);
+    const looksLikeTime    = (q)=> /\b(time|date|day|calendar|now)\b/i.test(q);
+    const looksLikeNews    = (q)=> /\b(news|headlines|latest|breaking|current affairs)\b/i.test(q);
+    const looksLikeSearch  = (q)=> /\b(who is|what is|search)\b/i.test(q);
+    const extractPlace = (q)=> (q.match(/\b(?:in|at|for)\s+([A-Za-z\s'.-]{2,})$/i)?.[1] || "").trim();
+    const escapeHTML = (s)=> String(s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m]));
 
-    // Chat + tools (time, weather, news, search)
+    // Geocode through worker
+    async function geocode(place){
+      const r = await fetch(`${WORKER_URL}/v1/geocode?q=${encodeURIComponent(place)}`, {cache:"no-store"});
+      const j = await r.json().catch(()=>null);
+      return j?.ok ? j : null;
+    }
+
+    // Chat + tools
     (()=>{
       const log=$("#chatLog"), form=$("#chatForm"), box=$("#chatBox");
       if(!log||!form||!box) return;
+
       const hist = JSON.parse(localStorage.getItem("elwyn:chat")||"[]");
-
       const add = (role,text)=>{ const d=document.createElement("div"); d.className="bubble "+(role==="user"?"user":"assistant"); d.textContent=text; log.appendChild(d); log.scrollTop=log.scrollHeight; };
-      const addHTML = (role, html)=>{ const d=document.createElement("div"); d.className="bubble "+(role==="user"?"user":"assistant"); d.innerHTML = html; log.appendChild(d); log.scrollTop=log.scrollHeight; };
-      const save=()=> localStorage.setItem("elwyn:chat", JSON.stringify(hist));
+      const addHTML = (role,html)=>{ const d=document.createElement("div"); d.className="bubble "+(role==="user"?"user":"assistant"); d.innerHTML=html; log.appendChild(d); log.scrollTop=log.scrollHeight; };
+      const save = ()=> localStorage.setItem("elwyn:chat", JSON.stringify(hist));
+      hist.forEach(m=>add(m.role, m.content));
 
-      hist.forEach(m=>add(m.role,m.content));
       $("#clearChat")?.addEventListener("click",()=>{ localStorage.removeItem("elwyn:chat"); log.innerHTML=""; });
-
-      async function geocode(place){
-        const r = await fetch(`${WORKER_URL}/v1/geocode?q=${encodeURIComponent(place)}`, {cache:"no-store"});
-        const j = await r.json().catch(()=>null);
-        return j?.ok ? j : null;
-      }
 
       async function callTime(q){
         const place = extractPlace(q);
         const tz = !place ? (Intl.DateTimeFormat().resolvedOptions().timeZone || undefined) : undefined;
-        let params = new URLSearchParams();
+        const params = new URLSearchParams();
         if (place) {
           const g = await geocode(place);
           if (g) { params.set("q", place); params.set("lat", g.lat); params.set("lon", g.lon); }
@@ -337,7 +507,7 @@
           if (tz) params.set("tz", tz);
           if (geo?.lat && geo?.lon) { params.set("lat", geo.lat); params.set("lon", geo.lon); }
         }
-        const r = await fetch(`${WORKER_URL}/v1/time?`+params.toString(), {cache:"no-store"});
+        const r = await fetch(`${WORKER_URL}/v1/time?${params.toString()}`, {cache:"no-store"});
         const j = await r.json();
         return j.ok ? `⏰ ${j.display}${j.city?` — ${j.city}`:""} (TZ: ${j.timezone})` : "Time lookup failed.";
       }
@@ -362,7 +532,6 @@
         return `🌤 Weather: ${c.temp_c ?? "?"}°C, wind ${c.wind_speed ?? "?"} m/s, precip ${c.precipitation_mm ?? 0} mm (tz: ${j.where?.timezone||"auto"})`;
       }
 
-      // NEWS: rich HTML + Discuss button
       async function callNews(q){
         const r = await fetch(`${WORKER_URL}/v1/news?q=`+encodeURIComponent(q), {cache:"no-store"});
         const j = await r.json();
@@ -371,18 +540,16 @@
         const fmt = (iso)=>{
           try {
             const d = new Date(iso || "");
-            const diffMs = Date.now() - d.getTime();
-            const diffH = diffMs / 36e5;
-            if (isFinite(diffH) && diffH < 24) {
+            const diff = (Date.now() - d.getTime())/36e5;
+            if (isFinite(diff) && diff < 24) {
               const rel = new Intl.RelativeTimeFormat("en",{numeric:"auto"});
-              return rel.format(-Math.round(diffH), "hour");
+              return rel.format(-Math.round(diff), "hour");
             }
             return new Intl.DateTimeFormat("en", { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" }).format(d);
           } catch { return ""; }
         };
 
         const bullets = j.items.map(it=>`- ${it.title} (${it.source}${it.iso?`, ${fmt(it.iso)}`:""}) — ${it.link}`);
-
         const itemsHTML = j.items.map(it=>{
           const when = it.iso ? ` · <span class="muted">${fmt(it.iso)}</span>` : "";
           const src  = it.source ? ` <span class="muted">(${it.source})</span>` : "";
@@ -408,7 +575,6 @@
         return `🔎 ${title}${j.summary || "No summary found."}${j.url?`\n\nMore: ${j.url}`:""}`;
       }
 
-      // Submit
       form.addEventListener("submit", async (e)=>{
         e.preventDefault();
         const text=(box.value||"").trim(); if(!text) return;
@@ -456,7 +622,7 @@
           }
         }catch{}
 
-        // Fallback model chat (no “— via …”)
+        // Model chat (no “— via …”)
         try{
           const r = await fetch(`${WORKER_URL}/v1/chat`, {
             method:"POST", headers:{ "content-type":"application/json" },
@@ -470,9 +636,5 @@
         }
       });
 
-      // Seed geolocation quietly
-      (async ()=>{ const existing = localStorage.getItem(geoKey); if(!existing) await updateGeoFromDevice(); })();
-    })();
-  </script>
-</body>
-</html>
+      // seed geolocation
+      (async ()=>{ const existing=localStorage.getItem(geoKey); if(!existing
