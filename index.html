@@ -8,57 +8,50 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root{ --bg:#0f1317; --panel:#12181f; --text:#e9eef3; --muted:#a9b1bd; --line:#233041; --primary:#7A1E2C; --primary-2:#8F2A3A; --ok:#49d19a; --err:#ff8a8a; --elev:0 8px 24px rgba(0,0,0,.35); --radius:14px; --focus:#8ec9ff; }
-    body[data-theme="classic"]{ --bg:#0f1317; --panel:#12181f; --text:#e9eef3; --muted:#a9b1bd; --line:#233041; --primary:#7A1E2C; --primary-2:#8F2A3A; }
-    body[data-theme="midnight"]{ --bg:#0b0f14; --panel:#111622; --text:#dfe8f5; --muted:#9fb0c7; --line:#1e2b41; --primary:#2f6be0; --primary-2:#3a7bff; }
-    body[data-theme="forest"]{ --bg:#0e1411; --panel:#121a16; --text:#e8f4ec; --muted:#a7c3b1; --line:#1c3327; --primary:#1f8a5b; --primary-2:#26a06a; }
-    body[data-theme="ocean"]{ --bg:#0c1318; --panel:#101a22; --text:#e8f7ff; --muted:#a7c6d6; --line:#1f3442; --primary:#0fa3c9; --primary-2:#18b5dd; }
-    body[data-theme="solar"]{ --bg:#0f1114; --panel:#151922; --text:#fff6e6; --muted:#e0cfa6; --line:#2c2a20; --primary:#ffb020; --primary-2:#ffc241; }
-    body[data-theme="orchid"]{ --bg:#130f14; --panel:#1b141c; --text:#f8ecff; --muted:#d0b7de; --line:#2e2331; --primary:#b15bd4; --primary-2:#c778e7; }
-    body[data-theme="slate"]{ --bg:#0f1113; --panel:#15181c; --text:#e8edf3; --muted:#b1bcc9; --line:#232a33; --primary:#5c7cff; --primary-2:#7791ff; }
-    body[data-theme="sand"]{ --bg:#0f100f; --panel:#171814; --text:#f4efe6; --muted:#d8cfbe; --line:#2e2a20; --primary:#d6a15b; --primary-2:#e2b16c; }
-    body[data-theme="rose"]{ --bg:#111014; --panel:#18161c; --text:#ffeef3; --muted:#e3c1cd; --line:#2e2331; --primary:#d6537a; --primary-2:#e06c90; }
-    body[data-theme="contrast"]{ --bg:#000; --panel:#0e0e0e; --text:#fff; --muted:#cfd6df; --line:#2b2b2b; --primary:#00d18f; --primary-2:#25e0a7; }
+    :root{ --bg:#0f1317; --panel:#12181f; --text:#e9eef3; --muted:#a9b1bd; --line:#233041; --primary:#7A1E2C; --primary-2:#8F2A3A; --ok:#49d19a; --err:#ff8a8a; --elev:0 8px 24px rgba(0,0,0,.35); --radius:14px }
+    body[data-theme="classic"]{ --bg:#0f1317; --panel:#12181f; --text:#e9eef3; --muted:#a9b1bd; --line:#233041; --primary:#7A1E2C; --primary-2:#8F2A3A }
+    body[data-theme="midnight"]{ --bg:#0b0f14; --panel:#111622; --text:#dfe8f5; --muted:#9fb0c7; --line:#1e2b41; --primary:#2f6be0; --primary-2:#3a7bff }
+    body[data-theme="forest"]{ --bg:#0e1411; --panel:#121a16; --text:#e8f4ec; --muted:#a7c3b1; --line:#1c3327; --primary:#1f8a5b; --primary-2:#26a06a }
+    body[data-theme="ocean"]{ --bg:#0c1318; --panel:#101a22; --text:#e8f7ff; --muted:#a7c6d6; --line:#1f3442; --primary:#0fa3c9; --primary-2:#18b5dd }
+    body[data-theme="solar"]{ --bg:#0f1114; --panel:#151922; --text:#fff6e6; --muted:#e0cfa6; --line:#2c2a20; --primary:#ffb020; --primary-2:#ffc241 }
+    body[data-theme="orchid"]{ --bg:#130f14; --panel:#1b141c; --text:#f8ecff; --muted:#d0b7de; --line:#2e2331; --primary:#b15bd4; --primary-2:#c778e7 }
+    body[data-theme="slate"]{ --bg:#0f1113; --panel:#15181c; --text:#e8edf3; --muted:#b1bcc9; --line:#232a33; --primary:#5c7cff; --primary-2:#7791ff }
+    body[data-theme="sand"]{ --bg:#0f100f; --panel:#171814; --text:#f4efe6; --muted:#d8cfbe; --line:#2e2a20; --primary:#d6a15b; --primary-2:#e2b16c }
+    body[data-theme="rose"]{ --bg:#111014; --panel:#18161c; --text:#ffeef3; --muted:#e3c1cd; --line:#2e2331; --primary:#d6537a; --primary-2:#e06c90 }
+    body[data-theme="contrast"]{ --bg:#000; --panel:#0e0e0e; --text:#fff; --muted:#cfd6df; --line:#2b2b2b; --primary:#00d18f; --primary-2:#25e0a7 }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; color:var(--text);
-      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      background: radial-gradient(1200px 800px at -10% -10%, color-mix(in oklab, var(--panel) 40%, black) 0%, var(--bg) 60%) fixed;
-    }
-
-    .topbar{ background:linear-gradient(90deg,var(--primary) 0%,var(--primary-2) 100%); border-bottom:1px solid color-mix(in oklab, #fff 6%, transparent); position:sticky; top:0; z-index:5; }
-    .wrap{ max-width:1200px; margin:0 auto; padding:12px 16px; display:flex; align-items:center; gap:12px }
-    .brand{ display:flex; align-items:center; gap:10px; color:#fff; text-decoration:none }
-    .logo{ width:34px; height:34px; border-radius:8px; background:#fff; color:var(--primary); display:grid; place-items:center; font-weight:800; box-shadow:var(--elev) }
-
-    .layout{ max-width:1200px; margin:20px auto; display:grid; grid-template-columns:280px 1fr; gap:18px; padding:0 16px }
-    .side{ position:sticky; top:16px; align-self:start }
-    .side-group{ background:color-mix(in oklab, var(--panel) 85%, transparent); border:1px solid var(--line); border-radius:var(--radius); padding:14px; box-shadow:var(--elev); margin-bottom:12px }
-    .side-title{ font-weight:700; margin-bottom:8px }
-    .side-link{ width:100%; text-align:left; padding:10px 12px; border-radius:10px; border:1px solid var(--line); background:color-mix(in oklab, var(--panel) 70%, black 30%); color:var(--text); margin-bottom:8px; cursor:pointer; transition:.15s }
-    .side-link.is-active,.side-link:hover{ background:color-mix(in oklab, var(--panel) 55%, var(--primary) 20%); border-color:color-mix(in oklab, var(--line) 70%, var(--primary) 30%) }
-
-    .select,.engine{ width:100%; background:color-mix(in oklab, var(--panel) 85%, #000 15%); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:10px; }
-    .card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; box-shadow:var(--elev); padding:16px }
-    .muted{ color:var(--muted) }
-    .grid{ display:grid; gap:12px }
-    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center }
-    .btn{ appearance:none; border:1px solid color-mix(in oklab, var(--line) 80%, #fff 0%); background:color-mix(in oklab, var(--panel) 85%, #000 15%); color:var(--text); padding:10px 14px; border-radius:10px; cursor:pointer; transition:.15s }
-    .btn:hover{ background:color-mix(in oklab, var(--panel) 70%, var(--primary) 10%) } .btn.primary{ background:var(--primary); border-color:var(--primary-2) } .btn.primary:hover{ background:var(--primary-2) }
-    .btn.tiny{ padding:6px 10px; font-size:12px; border-radius:999px }
-    .badge{ display:inline-block; padding:3px 8px; border-radius:999px; font-size:12px; background:rgba(255,255,255,.08); border:1px solid var(--line); margin-left:6px }
-    textarea{ width:100%; background:color-mix(in oklab, var(--panel) 85%, #000 15%); color:var(--text); border:1px solid var(--line); border-radius:10px; padding:10px; resize:vertical }
-    .chat-log{ max-height:420px; overflow:auto; border:1px dashed color-mix(in oklab, var(--line) 90%, #000 10%); border-radius:12px; padding:12px; background:color-mix(in oklab, var(--panel) 75%, #000 25%) }
-    .bubble{ padding:10px 12px; border-radius:12px; margin:8px 0; line-height:1.5; white-space:pre-wrap; animation:fade .12s ease; overflow-wrap:anywhere }
-    .bubble.user{ background:color-mix(in oklab, var(--panel) 70%, #000 30%); border:1px solid var(--line) }
-    .bubble.assistant{ background:color-mix(in oklab, var(--primary) 18%, var(--panel) 82%); border:1px solid color-mix(in oklab, var(--primary) 35%, var(--line) 65%) }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{margin:0;color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background: radial-gradient(1200px 800px at -10% -10%, color-mix(in oklab, var(--panel) 40%, black) 0%, var(--bg) 60%) fixed;}
+    .topbar{background:linear-gradient(90deg,var(--primary) 0%,var(--primary-2) 100%);border-bottom:1px solid rgba(255,255,255,.06);position:sticky;top:0;z-index:5}
+    .wrap{max-width:1200px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
+    .brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none}
+    .logo{width:34px;height:34px;border-radius:8px;background:#fff;color:var(--primary);display:grid;place-items:center;font-weight:800;box-shadow:var(--elev)}
+    .layout{max-width:1200px;margin:20px auto;display:grid;grid-template-columns:280px 1fr;gap:18px;padding:0 16px}
+    .side{position:sticky;top:16px;align-self:start}
+    .side-group{background:color-mix(in oklab, var(--panel) 85%, transparent);border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:var(--elev);margin-bottom:12px}
+    .side-title{font-weight:700;margin-bottom:8px}
+    .side-link{width:100%;text-align:left;padding:10px 12px;border-radius:10px;border:1px solid var(--line);
+      background:color-mix(in oklab, var(--panel) 70%, black 30%);color:var(--text);margin-bottom:8px;cursor:pointer;transition:.15s}
+    .side-link.is-active,.side-link:hover{background:color-mix(in oklab, var(--panel) 55%, var(--primary) 20%);
+      border-color:color-mix(in oklab, var(--line) 70%, var(--primary) 30%)}
+    .select,.engine{width:100%;background:color-mix(in oklab, var(--panel) 85%, #000 15%);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--elev);padding:16px}
+    .muted{color:var(--muted)} .grid{display:grid;gap:12px} .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .btn{appearance:none;border:1px solid color-mix(in oklab, var(--line) 80%, #fff 0%);background:color-mix(in oklab, var(--panel) 85%, #000 15%);
+      color:var(--text);padding:10px 14px;border-radius:10px;cursor:pointer;transition:.15s}
+    .btn:hover{background:color-mix(in oklab, var(--panel) 70%, var(--primary) 10%)} .btn.primary{background:var(--primary);border-color:var(--primary-2)}
+    .btn.primary:hover{background:var(--primary-2)} .btn.tiny{padding:6px 10px;font-size:12px;border-radius:999px}
+    .badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;background:rgba(255,255,255,.08);border:1px solid var(--line);margin-left:6px}
+    textarea{width:100%;background:color-mix(in oklab, var(--panel) 85%, #000 15%);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px;resize:vertical}
+    .chat-log{max-height:420px;overflow:auto;border:1px dashed color-mix(in oklab, var(--line) 90%, #000 10%);border-radius:12px;padding:12px;background:color-mix(in oklab, var(--panel) 75%, #000 25%)}
+    .bubble{padding:10px 12px;border-radius:12px;margin:8px 0;line-height:1.5;white-space:pre-wrap;animation:fade .12s ease;overflow-wrap:anywhere}
+    .bubble.user{background:color-mix(in oklab, var(--panel) 70%, #000 30%);border:1px solid var(--line)}
+    .bubble.assistant{background:color-mix(in oklab, var(--primary) 18%, var(--panel) 82%);border:1px solid color-mix(in oklab, var(--primary) 35%, var(--line) 65%)}
     @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-    .panel{ display:none } .panel.is-visible{ display:block }
-    .footer{ margin:30px 0; color:var(--muted); text-align:center }
-
-    @media (max-width: 1000px){ .layout{ grid-template-columns: 1fr } .side{ position:static } }
+    .panel{display:none}.panel.is-visible{display:block}
+    .footer{margin:30px 0;color:var(--muted);text-align:center}
+    @media (max-width:1000px){.layout{grid-template-columns:1fr}.side{position:static}}
   </style>
 </head>
 
@@ -151,9 +144,7 @@
           <h2>Text → Image</h2>
           <form id="imgForm" class="grid">
             <textarea id="imgPrompt" rows="3" placeholder="Describe the image…"></textarea>
-            <div class="row">
-              <button class="btn primary" type="submit">Generate</button>
-            </div>
+            <div class="row"><button class="btn primary" type="submit">Generate</button></div>
           </form>
           <div id="imgOut" class="grid"></div>
         </div>
@@ -169,40 +160,35 @@
         <div class="card"><h2>Text → Audio <span class="badge">Soon</span></h2><p class="muted">Coming soon.</p></div>
       </section>
 
-      <!-- Mission -->
+      <!-- Mission (FULL CONTENT) -->
       <section class="panel" data-panel="mission">
         <div class="card">
+          <style>
+            .mission h2,.mission h3{margin:0 0 10px 0}.mission h4{margin:16px 0 8px 0}.mission p{margin:6px 0 10px 0}
+            .mission .muted{color:var(--muted)}
+            .mission .note{padding:12px;border:1px dashed var(--line);border-radius:10px;background:color-mix(in oklab,var(--panel) 85%,#000 15%);margin:10px 0 16px}
+            .mission .grid-2{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+            @media (max-width:900px){.mission .grid-2{grid-template-columns:1fr}}
+            .mission table{width:100%;border-collapse:collapse;margin:10px 0 16px 0;background:color-mix(in oklab,var(--panel) 90%,#000 10%);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+            .mission th,.mission td{text-align:left;padding:10px 12px;vertical-align:top;border-bottom:1px solid var(--line)}
+            .mission th{background:color-mix(in oklab,var(--panel) 70%,var(--primary) 10%);font-weight:700}
+            .mission tr:last-child td{border-bottom:none}
+            .mission ul{margin:6px 0 12px 18px}.mission .small{font-size:12px}
+          </style>
           <div class="mission">
-            <style>
-              .mission h2, .mission h3 { margin: 0 0 8px 0 }
-              .mission h4 { margin: 14px 0 6px 0 }
-              .mission p { margin: 6px 0 10px 0 }
-              .mission .muted { color: var(--muted) }
-              .mission .grid-2 { display:grid; gap:12px; grid-template-columns: 1fr 1fr }
-              @media (max-width: 900px){ .mission .grid-2 { grid-template-columns: 1fr } }
-              .mission table { width:100%; border-collapse: collapse; margin: 8px 0 14px 0; background: color-mix(in oklab, var(--panel) 90%, #000 10%); border:1px solid var(--line); border-radius: 10px; overflow: hidden }
-              .mission th, .mission td { text-align:left; padding:10px 12px; vertical-align:top; border-bottom:1px solid var(--line) }
-              .mission th { background: color-mix(in oklab, var(--panel) 70%, var(--primary) 10%); font-weight:700 }
-              .mission tr:last-child td { border-bottom: none }
-              .mission .note { padding:10px 12px; border:1px dashed var(--line); border-radius:10px; background: color-mix(in oklab, var(--panel) 85%, #000 15%); margin-top:8px }
-            </style>
-
             <h2>Mission — Non-Profit Behavioral Health (AI-assisted, human-in-the-loop)</h2>
-            <p class="muted">We expand access to high-quality behavioral health services by pairing models for continuous monitoring and instant support with licensed clinicians for complex care, crisis intervention, and individualized planning. AI assists; clinicians lead.</p>
+            <p class="muted">We expand access to high-quality behavioral health services by pairing models for continuous monitoring and instant support with licensed clinicians for complex therapy, crisis intervention, and individualized planning. AI assists; clinicians lead.</p>
+            <div class="note"><strong>Key Differentiator:</strong> Hybrid human-AI care model where AI handles routine monitoring, data analysis, and immediate support, while human clinicians focus on complex therapeutic relationships, crisis intervention, and treatment planning. This allows wider reach with maintained quality and safety.</div>
 
-            <div class="note">
-              <strong>Key Differentiator:</strong> Hybrid human–AI care model. Models handle routine monitoring, risk signals, and data synthesis; human clinicians focus on therapeutic relationships, crisis work, and treatment planning. This increases reach while maintaining quality and safety.
-            </div>
-
-            <h3 style="margin-top:16px">Program Pillars</h3>
+            <h3>Program Pillars</h3>
             <div class="grid-2">
               <div>
                 <h4>AI-Powered Assessment & Intake</h4>
                 <ul>
-                  <li>Intelligent screening that conducts preliminary behavioral assessments.</li>
-                  <li>Risk stratification algorithms to prioritize high-need clients.</li>
+                  <li>Intelligent screening tools that conduct preliminary behavioral assessments.</li>
+                  <li>Risk stratification algorithms that prioritize high-need clients.</li>
                   <li>Automated crisis detection via speech, text, or behavioral indicators.</li>
-                  <li>Cultural competency matching to pair clients with appropriate providers.</li>
+                  <li>Cultural-competency matching to pair clients with appropriate providers.</li>
                 </ul>
 
                 <h4>Remote Therapeutic Platforms</h4>
@@ -213,13 +199,12 @@
                   <li>Adaptive therapy modules that adjust to client progress and engagement.</li>
                 </ul>
               </div>
-
               <div>
                 <h4>Personalized Treatment Planning</h4>
                 <ul>
-                  <li>Evidence-based treatment matching based on client profile and outcomes data.</li>
-                  <li>Dynamic adjustments from real-time progress monitoring.</li>
-                  <li>Predictive relapse prevention that flags warning signs early.</li>
+                  <li>Evidence-based treatment matching from client profile and outcomes data.</li>
+                  <li>Dynamic treatment adjustment based on real-time progress monitoring.</li>
+                  <li>Predictive relapse prevention to identify warning signs early.</li>
                 </ul>
 
                 <h4>Digital Engagement & Support</h4>
@@ -227,130 +212,70 @@
                   <li>Mobile apps with AI coaching for practice between sessions.</li>
                   <li>Automated check-ins and mood tracking with escalation protocols.</li>
                   <li>Peer support matching by shared experiences and compatibility.</li>
-                  <li>Gamified behavioral interventions to boost engagement.</li>
+                  <li>Gamified behavioral interventions to increase engagement.</li>
                 </ul>
 
                 <h4>Operational Excellence</h4>
                 <ul>
-                  <li>Smart scheduling that optimizes provider–client matching and availability.</li>
-                  <li>Automated documentation and progress note generation.</li>
-                  <li>Outcome tracking dashboards for funders and stakeholders.</li>
+                  <li>Smart scheduling to optimize provider-client matching and availability.</li>
+                  <li>Automated documentation and progress-note generation.</li>
+                  <li>Outcome-tracking dashboards for funders and stakeholders.</li>
                   <li>Multi-language support with real-time translation.</li>
                 </ul>
               </div>
             </div>
 
-            <h3 style="margin-top:8px">I. Clinical &amp; Direct Service Features</h3>
+            <h3>I. Clinical &amp; Direct Service Features</h3>
             <p class="muted">Features that directly improve care quality and access in remote settings.</p>
             <table>
-              <thead>
-                <tr><th style="width:28%">Feature</th><th style="width:34%">AI Mechanism</th><th>Non-Profit Value</th></tr>
-              </thead>
+              <thead><tr><th style="width:28%">Feature</th><th style="width:34%">AI Mechanism</th><th>Non-Profit Value</th></tr></thead>
               <tbody>
-                <tr>
-                  <td>24/7 Conversational AI Support</td>
-                  <td>NLP chatbots/virtual assistants informed by CBT/DBT skills.</td>
-                  <td>Immediate, low-barrier support outside business hours to maximize accessibility.</td>
-                </tr>
-                <tr>
-                  <td>Personalized Interventions</td>
-                  <td>ML analyzes mood tracking, text/voice patterns, and progress data.</td>
-                  <td>Tailors resources to the user’s real-time state for higher treatment relevance.</td>
-                </tr>
-                <tr>
-                  <td>Early Crisis Detection &amp; Escalation</td>
-                  <td>Sentiment analysis &amp; vocal biomarkers detect high-risk language/shifts.</td>
-                  <td>Flags SI/high distress and triggers playbooks (hotline, clinician connect, alerts).</td>
-                </tr>
-                <tr>
-                  <td>Remote Progress Monitoring</td>
-                  <td>Wearables/health APIs (sleep, HRV, activity) plus mood diaries.</td>
-                  <td>Objective, continuous data enables measurement-informed care and relapse tracking.</td>
-                </tr>
-                <tr>
-                  <td>Automated Clinical Documentation</td>
-                  <td>Ambient transcription + structuring during sessions (with consent).</td>
-                  <td>Drafts progress notes, summaries, and plans so clinicians can focus on care.</td>
-                </tr>
-                <tr>
-                  <td>Diagnosis &amp; Treatment Support</td>
-                  <td>Predictive analytics over history, assessments, and behavior patterns.</td>
-                  <td>Assists clinicians with likely diagnoses and evidence-aligned interventions.</td>
-                </tr>
+                <tr><td>24/7 Conversational AI Support</td><td>NLP chatbots/virtual assistants trained in CBT/DBT.</td><td>Immediate, low-barrier support outside business hours to maximize accessibility.</td></tr>
+                <tr><td>Personalized Interventions</td><td>ML analyzes mood tracking, text/voice patterns, and progress data.</td><td>Tailors resources to the person’s real-time state for higher treatment relevance.</td></tr>
+                <tr><td>Early Crisis Detection &amp; Escalation</td><td>Sentiment analysis &amp; vocal biomarkers detect high-risk language/shifts.</td><td>Flags suicidal ideation/high distress and triggers playbooks (hotline, clinician connect, alerts).</td></tr>
+                <tr><td>Remote Progress Monitoring</td><td>Wearables/health APIs (sleep, HRV, activity) + mood diaries.</td><td>Objective, continuous data enables measurement-informed care and relapse tracking.</td></tr>
+                <tr><td>Automated Clinical Documentation</td><td>Ambient transcription + structuring during sessions (with consent).</td><td>Drafts notes, summaries, and plans so clinicians can focus on care.</td></tr>
+                <tr><td>Diagnosis &amp; Treatment Support</td><td>Predictive analytics over history, assessments, and behavior patterns.</td><td>Assists clinicians with likely diagnoses and evidence-aligned interventions.</td></tr>
               </tbody>
             </table>
 
             <h3>II. Operational &amp; Efficiency Features</h3>
             <p class="muted">Capabilities that stretch limited resources and increase reach.</p>
             <table>
-              <thead>
-                <tr><th style="width:28%">Feature</th><th style="width:34%">AI Mechanism</th><th>Non-Profit Value</th></tr>
-              </thead>
+              <thead><tr><th style="width:28%">Feature</th><th style="width:34%">AI Mechanism</th><th>Non-Profit Value</th></tr></thead>
               <tbody>
-                <tr>
-                  <td>Workflow Automation</td>
-                  <td>RPA for scheduling, reminders, and follow-ups.</td>
-                  <td>Reduces admin burden and costs; helps prevent staff burnout.</td>
-                </tr>
-                <tr>
-                  <td>Resource Optimization</td>
-                  <td>Predictive modeling for demand, staffing, and high-risk periods.</td>
-                  <td>Targets scarce therapist time and funds where need is greatest.</td>
-                </tr>
-                <tr>
-                  <td>Grant Writing &amp; Reporting</td>
-                  <td>Generative AI drafts impact reports and tailored proposals.</td>
-                  <td>Improves fundraising efficiency with lower overhead.</td>
-                </tr>
-                <tr>
-                  <td>Customizable Reporting Dashboards</td>
-                  <td>Automated data pipelines and visualization.</td>
-                  <td>Real-time outcomes for boards, donors, and regulators.</td>
-                </tr>
+                <tr><td>Workflow Automation</td><td>RPA for scheduling, reminders, and follow-ups.</td><td>Reduces admin burden and costs; helps prevent staff burnout.</td></tr>
+                <tr><td>Resource Optimization</td><td>Predictive modeling for demand, staffing, and high-risk periods.</td><td>Targets scarce therapist time and funds where need is greatest.</td></tr>
+                <tr><td>Grant Writing &amp; Reporting</td><td>Generative AI drafts impact reports and tailored proposals.</td><td>Improves fundraising efficiency with lower overhead.</td></tr>
+                <tr><td>Customizable Reporting Dashboards</td><td>Automated data pipelines and visualization.</td><td>Real-time outcomes for boards, donors, and regulators.</td></tr>
               </tbody>
             </table>
 
             <h3>III. Non-Profit &amp; Ethical Mandates</h3>
             <p class="muted">Foundational policies for safe, equitable care at scale.</p>
             <table>
-              <thead>
-                <tr><th style="width:34%">Feature</th><th>Description &amp; Rationale</th></tr>
-              </thead>
+              <thead><tr><th style="width:32%">Feature</th><th>Description &amp; Rationale</th></tr></thead>
               <tbody>
-                <tr>
-                  <td>HIPAA/GDPR-Compliant Security</td>
-                  <td>End-to-end encryption, advanced anonymization, and robust access controls; privacy compliance is non-negotiable for sensitive mental health data.</td>
-                </tr>
-                <tr>
-                  <td>Equity &amp; Bias Mitigation</td>
-                  <td>Diverse training sets and regular audits to ensure fair recommendations and avoid perpetuating disparities.</td>
-                </tr>
-                <tr>
-                  <td>Cost-Sensitive Scalability</td>
-                  <td>Serve large user volumes with low variable cost to reach uninsured/underinsured populations.</td>
-                </tr>
-                <tr>
-                  <td>Transparency &amp; Human Oversight</td>
-                  <td>Human-in-the-loop by design; clinicians make final decisions and users are informed when interacting with AI.</td>
-                </tr>
-                <tr>
-                  <td>Ethical Data Ownership</td>
-                  <td>Clear policies granting users control and ownership over their behavioral health data.</td>
-                </tr>
+                <tr><td>HIPAA/GDPR-Compliant Security</td><td>End-to-end encryption, data minimization/anonymization, and robust access controls. Strict privacy compliance is non-negotiable for mental-health data.</td></tr>
+                <tr><td>Equity &amp; Bias Mitigation</td><td>Diverse datasets, continuous fairness auditing, and outcome reviews to avoid perpetuating disparities across demographic groups.</td></tr>
+                <tr><td>Cost-Sensitive Scalability</td><td>Architecture designed for high volume at low variable cost to serve uninsured/underinsured communities.</td></tr>
+                <tr><td>Transparency &amp; Human Oversight</td><td>Human-in-the-loop by design: clinicians have final say; users are informed when interacting with AI.</td></tr>
+                <tr><td>Ethical Data Ownership</td><td>Clear policies granting users control over their behavioral-health data: consent, portability, and deletion pathways.</td></tr>
               </tbody>
             </table>
 
-            <h3>Operational Safeguards &amp; Copilots</h3>
+            <h3>Clinical Safety &amp; Operations Utilities</h3>
             <ul>
-              <li><strong>Intake triage bot:</strong> collects basics, screens risk (SI/HI), routes to clinician.</li>
-              <li><strong>Safety classifier:</strong> real-time risk flags in chat/calls; auto-escalation playbooks.</li>
-              <li><strong>Clinician copilot:</strong> draft notes, summaries, ICD-10/SNOMED suggestions, after-visit plans.</li>
+              <li><strong>Intake triage bot</strong>: collects demographics &amp; concerns, screens for risk (SI/HI), routes to appropriate clinician.</li>
+              <li><strong>Safety classifier</strong>: real-time risk flags in chat/calls; auto-escalation playbooks and notifications.</li>
+              <li><strong>Clinician copilot</strong>: drafts notes, visit summaries, ICD-10/SNOMED suggestions, and after-visit plans.</li>
             </ul>
+            <p class="small muted">AI-assisted care is always human-in-the-loop. For emergencies, call local emergency services (e.g., 911 in the U.S. or your regional equivalent).</p>
           </div>
         </div>
       </section>
 
-      <!-- Programs (exact wording you provided) -->
+      <!-- Programs (exact wording) -->
       <section class="panel" data-panel="therapy">
         <div class="card">
           <h2>Therapy — AI-Assisted Online <span class="badge">Soon</span></h2>
@@ -426,7 +351,7 @@
     // === CONFIG ===
     const WORKER_URL = "/api";
     const DEFAULT_MODEL = "model-5-thinking";
-    const $  = (s)=>document.querySelector(s);
+    const $ = (s)=>document.querySelector(s);
     const $$ = (s)=>[...document.querySelectorAll(s)];
     const currentModel = ()=> $("#engineSelect")?.value || DEFAULT_MODEL;
 
@@ -637,4 +562,60 @@
       });
 
       // seed geolocation
-      (async ()=>{ const existing=localStorage.getItem(geoKey); if(!existing
+      (async ()=>{ const existing=localStorage.getItem(geoKey); if(!existing) await updateGeoFromDevice(); })();
+    })();
+
+    // === Image (frontend) ===
+    (() => {
+      const form  = document.getElementById("imgForm");
+      const input = document.getElementById("imgPrompt");
+      const out   = document.getElementById("imgOut");
+      if (!form || !input || !out) return;
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const p = (input.value || "").trim(); if (!p) return;
+
+        out.innerHTML = `<div class="muted">Generating…</div>`;
+
+        const ctl = new AbortController();
+        const to  = setTimeout(()=>ctl.abort(), 45000);
+
+        try {
+          const r = await fetch(`${WORKER_URL}/v1/image`, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ prompt: p, size: "1024x1024" }),
+            signal: ctl.signal
+          });
+          clearTimeout(to);
+
+          const raw = await r.text();
+          let j = {}; try { j = JSON.parse(raw); } catch {
+            out.innerHTML = `<div class="muted">Upstream returned non-JSON. Status ${r.status}. Raw: <code>${raw.slice(0,240)}…</code></div>`;
+            return;
+          }
+
+          if (j?.ok && j.image_b64) {
+            const img = new Image();
+            img.src = "data:image/png;base64," + j.image_b64;
+            img.alt = "generated image";
+            img.style.width = "100%";
+            img.loading = "lazy";
+            out.innerHTML = `<div class="tiny muted">Model: ${j.modelUsed || "unknown"} • ${j.size || "1024x1024"}</div>`;
+            out.appendChild(img);
+            return;
+          }
+
+          const msg = j?.error || "Image generation failed";
+          const detail = j?.detail ? `<div class="tiny muted">Detail: ${j.detail}</div>` : "";
+          out.innerHTML = `<div class="muted">Error: ${msg}</div>${detail}`;
+        } catch (err) {
+          const aborted = err?.name === "AbortError";
+          out.innerHTML = `<div class="muted">${aborted ? "Request timed out (45s)" : "Server error"}: ${err?.message || err}</div>`;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
